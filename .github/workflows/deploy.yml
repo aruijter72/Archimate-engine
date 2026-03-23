@@ -1,4 +1,4 @@
-name: Generate ArchiMate Artefacts
+name: Generate ArchiMate Artefacts & Deploy to GitHub Pages
 
 on:
   push:
@@ -7,6 +7,12 @@ on:
 
 permissions:
   contents: write      # needed to commit generated files back to main
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   generate:
@@ -62,16 +68,15 @@ jobs:
             git push
           fi
 
-      # ── NOTE: GitHub Pages deployment is disabled ──────────────────────
-      # GitHub Pages requires a public repo or a paid GitHub plan.
-      # To enable: make the repo public (Settings → General → Change visibility)
-      # then uncomment and add these steps:
-      #
-      # - uses: actions/configure-pages@v5
-      # - uses: actions/upload-pages-artifact@v3
-      #   with: { path: docs/ }
-      # - uses: actions/deploy-pages@v4
-      #
-      # Also add to the top-level permissions block:
-      #   pages: write
-      #   id-token: write
+      # ── Deploy docs/ to GitHub Pages ──────────────────────────────────
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
