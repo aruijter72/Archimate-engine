@@ -34,34 +34,29 @@ jobs:
       - name: Install Python dependencies
         run: pip install openpyxl lxml
 
-      # ── Determine what changed ────────────────────────────────────────
-      - name: Check changed files
+      # ── Choose input source ───────────────────────────────────────────
+      # Koppelregister takes priority when present; model-input.xlsx is fallback
+      - name: Select input source
         id: changes
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
-          if echo "$CHANGED" | grep -q "model-input.xlsx"; then
-            echo "excel_changed=true" >> $GITHUB_OUTPUT
+          if [ -f "Koppelregister_v1.xlsx" ]; then
+            echo "use_koppel=true" >> $GITHUB_OUTPUT
           else
-            echo "excel_changed=false" >> $GITHUB_OUTPUT
-          fi
-          if echo "$CHANGED" | grep -q "Koppelregister"; then
-            echo "koppel_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "koppel_changed=false" >> $GITHUB_OUTPUT
+            echo "use_koppel=false" >> $GITHUB_OUTPUT
           fi
 
-      # ── Generate model from Koppelregister (takes priority if changed) ─
+      # ── Generate model from Koppelregister (preferred) ────────────────
       - name: Generate model.archimate from Koppelregister
-        if: steps.changes.outputs.koppel_changed == 'true'
+        if: steps.changes.outputs.use_koppel == 'true'
         run: |
-          echo "Koppelregister changed — regenerating model.archimate ..."
+          echo "Koppelregister found — regenerating model.archimate ..."
           python scripts/generate_model_koppelregister.py
 
-      # ── Generate model from model-input.xlsx (fallback / own model) ───
+      # ── Generate model from model-input.xlsx (fallback) ───────────────
       - name: Generate model.archimate from Excel
-        if: steps.changes.outputs.excel_changed == 'true' && steps.changes.outputs.koppel_changed != 'true'
+        if: steps.changes.outputs.use_koppel != 'true'
         run: |
-          echo "model-input.xlsx changed — regenerating model.archimate ..."
+          echo "No Koppelregister — falling back to model-input.xlsx ..."
           python scripts/generate_model.py
 
       # ── Always regenerate HTML from current model.archimate ───────────
@@ -71,7 +66,7 @@ jobs:
       # ── Commit model.archimate back to main (only when regenerated) ───
       # docs/index.html is NOT committed — it goes directly to Pages to avoid conflicts
       - name: Commit model.archimate
-        if: steps.changes.outputs.excel_changed == 'true' || steps.changes.outputs.koppel_changed == 'true'
+        if: always()
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name  "github-actions[bot]"
