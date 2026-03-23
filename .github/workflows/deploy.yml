@@ -32,7 +32,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install Python dependencies
-        run: pip install openpyxl lxml
+        run: pip install openpyxl lxml pandas
 
       # ── Choose input source ───────────────────────────────────────────
       # Koppelregister takes priority when present; model-input.xlsx is fallback
