@@ -1,0 +1,7 @@
+[main 307da47] autopush: 2026-03-28 13:25:44
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 autopush.log
+remote: This repository moved. Please use the new location:        
+remote:   https://github.com/aruijter72/Archimate-engine.git        
+To https://github.com/aruijter72/archimate-engine.git
+   6e58af3..307da47  main -> main
