@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:archimate="http://www.archimatetool.com/archimate"
+                 name="Test Model" id="id-test001" version="5.0">
+  <folder name="Business" id="id-folder-biz" type="business">
+    <element xsi:type="archimate:BusinessActor" name="Test Actor" id="id-elem-001">
+      <documentation>Test element</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessRole" name="Test Role" id="id-elem-002"/>
+  </folder>
+  <folder name="Application" id="id-folder-app" type="application"/>
+  <folder name="Technology" id="id-folder-tech" type="technology"/>
+  <folder name="Motivation" id="id-folder-mot" type="motivation"/>
+  <folder name="Implementation &amp; Migration" id="id-folder-impl" type="implementation_migration"/>
+  <folder name="Other" id="id-folder-other" type="other"/>
+  <folder name="Relations" id="id-folder-rel" type="relations">
+    <element xsi:type="archimate:AssociationRelationship" id="id-rel-001" source="id-elem-001" target="id-elem-002"/>
+  </folder>
+  <folder name="Views" id="id-folder-views" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Default View" id="id-view-001">
+      <child xsi:type="archimate:DiagramObject" id="id-diag-001" archimateElement="id-elem-001">
+        <bounds x="60" y="60" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-conn-001" source="id-diag-001" target="id-diag-002" archimateRelationship="id-rel-001"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-diag-002" archimateElement="id-elem-002" targetConnections="id-conn-001">
+        <bounds x="260" y="60" width="120" height="55"/>
+      </child>
+    </element>
+  </folder>
+</archimate:model>
