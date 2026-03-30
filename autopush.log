@@ -60559,3 +60559,6 @@ To https://github.com/aruijter72/Archimate-engine.git
 [main 36b50a89] autopush: 2026-03-30 09:41:46
  1 file changed, 4 insertions(+)
 fatal: unable to access 'https://github.com/aruijter72/Archimate-engine.git/': Failed to connect to github.com port 443 after 231498 ms: Couldn't connect to server
+[main 756572bf] autopush: 2026-03-30 09:45:41
+ 1 file changed, 3 insertions(+)
+fatal: unable to access 'https://github.com/aruijter72/Archimate-engine.git/': Could not resolve host: github.com
