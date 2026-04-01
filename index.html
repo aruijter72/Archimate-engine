@@ -537,6 +537,18 @@
     .wiz-back:hover { border-color: var(--muted); color: var(--white); }
     .wiz-err { color: #ef4444; font-size: .78rem; margin-top: .35rem; }
 
+    /* ── AR Logo ─────────────────────────────────────────────── */
+    .ar-logo {
+      display: inline-block; flex-shrink: 0;
+      mix-blend-mode: screen;  /* removes black bg, keeps gold */
+      opacity: .82;
+      transition: opacity .2s;
+    }
+    .ar-logo:hover { opacity: 1; }
+    .ar-logo-header { height: 26px; width: auto; }
+    .ar-logo-modal  { height: 44px; width: auto; display: block; margin: 0 auto .9rem; }
+    .ar-logo-footer { height: 16px; width: auto; vertical-align: middle; }
+
     /* ── Footer ──────────────────────────────────────────────── */
     .app-footer {
       text-align: center; padding: 1.25rem;
