@@ -1010,6 +1010,166 @@ function showTemplates() {
 function hideTemplates() {
   document.getElementById('tmplModal').classList.remove('open');
 }
+
+// ══════════════════════════════════════════════════════════════
+// GUIDED WIZARD (Level 3)
+// ══════════════════════════════════════════════════════════════
+const _wiz = { step:1, name:'', actors:'', processes:'', systems:'', err:'' };
+
+function showWizard() {
+  _wiz.step=1; _wiz.name=''; _wiz.actors=''; _wiz.processes=''; _wiz.systems=''; _wiz.err='';
+  renderWizStep();
+  document.getElementById('wizModal').classList.add('open');
+}
+function hideWizard() {
+  document.getElementById('wizModal').classList.remove('open');
+}
+
+function _wizSaveCurrent() {
+  if (_wiz.step===1) _wiz.name      = (document.getElementById('wizName')     ?.value||'').trim();
+  if (_wiz.step===2) _wiz.actors    = (document.getElementById('wizActors')   ?.value||'').trim();
+  if (_wiz.step===3) _wiz.processes = (document.getElementById('wizProcesses')?.value||'').trim();
+  if (_wiz.step===4) _wiz.systems   = (document.getElementById('wizSystems')  ?.value||'').trim();
+}
+
+function wizNext() {
+  _wizSaveCurrent(); _wiz.err = '';
+  if (_wiz.step===1 && !_wiz.name) { _wiz.err='Please give your model a name.'; renderWizStep(); return; }
+  if (_wiz.step < 5) { _wiz.step++; renderWizStep(); }
+}
+function wizSkip() { _wizSaveCurrent(); if (_wiz.step < 5) { _wiz.step++; renderWizStep(); } }
+function wizBack() { _wizSaveCurrent(); _wiz.err=''; if (_wiz.step > 1) { _wiz.step--; renderWizStep(); } }
+
+function _splitLines(s) {
+  return (s||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+}
+
+function renderWizStep() {
+  const labels = ['Name & Purpose','Key Actors','Processes','Systems','Preview'];
+  const dots = labels.map((l,i)=>{
+    const n=i+1, cls=n===_wiz.step?'active':n<_wiz.step?'done':'';
+    return `<div class="wiz-step-dot ${cls}">${n<_wiz.step?'✓ ':''}${l}</div>`;
+  }).join('');
+
+  let body = `<div class="wiz-steps">${dots}</div>`;
+
+  if (_wiz.step===1) {
+    body += `
+      <div class="wiz-q">What is this model about?</div>
+      <div class="wiz-hint">Give your model a clear name — this becomes the title in the ArchiMate export. A brief description is optional but helpful.</div>
+      <input id="wizName" class="wiz-input" placeholder="e.g. ESB Integration Platform, Order-to-Cash, IT Help Desk…" value="${esc(_wiz.name)}">
+      ${_wiz.err?`<div class="wiz-err">${_wiz.err}</div>`:''}
+      <div class="wiz-actions">
+        <button class="btn btn-primary" onclick="wizNext()">Next →</button>
+      </div>`;
+
+  } else if (_wiz.step===2) {
+    body += `
+      <div class="wiz-q">Who are the key actors or parties?</div>
+      <div class="wiz-hint">List the people, teams, departments, or external organisations involved. One per line, or comma-separated. These become <strong>Business Actors</strong>.</div>
+      <textarea id="wizActors" class="wiz-textarea" placeholder="e.g.&#10;Customer Service Team&#10;Wholesale Customer&#10;Finance Department">${esc(_wiz.actors)}</textarea>
+      <div class="wiz-actions">
+        <button class="wiz-back" onclick="wizBack()">← Back</button>
+        <button class="btn btn-secondary" onclick="wizSkip()">Skip</button>
+        <button class="btn btn-primary" onclick="wizNext()">Next →</button>
+      </div>`;
+
+  } else if (_wiz.step===3) {
+    body += `
+      <div class="wiz-q">What are the key processes or activities?</div>
+      <div class="wiz-hint">List the main steps, workflows, or activities. One per line, or comma-separated. These become <strong>Business Processes</strong>.</div>
+      <textarea id="wizProcesses" class="wiz-textarea" placeholder="e.g.&#10;Order Management&#10;Delivery Tracking&#10;Invoice Query Handling">${esc(_wiz.processes)}</textarea>
+      <div class="wiz-actions">
+        <button class="wiz-back" onclick="wizBack()">← Back</button>
+        <button class="btn btn-secondary" onclick="wizSkip()">Skip</button>
+        <button class="btn btn-primary" onclick="wizNext()">Next →</button>
+      </div>`;
+
+  } else if (_wiz.step===4) {
+    body += `
+      <div class="wiz-q">What software or systems are involved?</div>
+      <div class="wiz-hint">List the applications, platforms, or tools that support the work above. One per line, or comma-separated. These become <strong>Application Components</strong>.</div>
+      <textarea id="wizSystems" class="wiz-textarea" placeholder="e.g.&#10;CRM System&#10;Order Management Portal&#10;ERP (SAP)">${esc(_wiz.systems)}</textarea>
+      <div class="wiz-actions">
+        <button class="wiz-back" onclick="wizBack()">← Back</button>
+        <button class="btn btn-secondary" onclick="wizSkip()">Skip</button>
+        <button class="btn btn-primary" onclick="wizNext()">Preview →</button>
+      </div>`;
+
+  } else if (_wiz.step===5) {
+    const actors  = _splitLines(_wiz.actors);
+    const procs   = _splitLines(_wiz.processes);
+    const systems = _splitLines(_wiz.systems);
+    const relCount = actors.length*procs.length + systems.length*procs.length;
+
+    const actorTags  = actors.map(a=>`<span class="wiz-tag biz">${esc(a)}</span>`).join('') || '<span style="color:var(--muted);font-size:.78rem">none</span>';
+    const procTags   = procs.map(p=>`<span class="wiz-tag biz">${esc(p)}</span>`).join('')  || '<span style="color:var(--muted);font-size:.78rem">none</span>';
+    const sysTags    = systems.map(s=>`<span class="wiz-tag app">${esc(s)}</span>`).join('') || '<span style="color:var(--muted);font-size:.78rem">none</span>';
+    const relLabel   = [
+      actors.length&&procs.length?`<span class="wiz-tag rel">Assignment</span> actors → processes`:'',
+      systems.length&&procs.length?`<span class="wiz-tag rel">Serving</span> systems → processes`:''
+    ].filter(Boolean).join('  ') || '<span style="color:var(--muted);font-size:.78rem">none (no processes defined)</span>';
+
+    const total = actors.length+procs.length+systems.length;
+    if (total===0) {
+      body += `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.84rem">Nothing to generate yet — go back and fill in at least a name and some actors or processes.</div>
+      <div class="wiz-actions"><button class="wiz-back" onclick="wizBack()">← Back</button></div>`;
+    } else {
+      body += `
+      <div class="wiz-q">Your model preview</div>
+      <div class="wiz-hint">Here's what will be generated. Click <strong>Generate Model</strong> to open it in the editor — you can rename, add, or remove anything afterwards.</div>
+      <div class="wiz-preview"><div class="wiz-preview-title biz">🏢 Business Actors (${actors.length})</div>${actorTags}</div>
+      <div class="wiz-preview"><div class="wiz-preview-title biz">⚙ Business Processes (${procs.length})</div>${procTags}</div>
+      <div class="wiz-preview"><div class="wiz-preview-title app">💻 Application Components (${systems.length})</div>${sysTags}</div>
+      <div class="wiz-preview"><div class="wiz-preview-title rel">🔗 Auto-generated Relationships (${relCount})</div>${relLabel}</div>
+      <div class="wiz-actions">
+        <button class="wiz-back" onclick="wizBack()">← Back</button>
+        <button class="btn btn-primary" onclick="wizGenerate()">✓ Generate Model</button>
+      </div>`;
+    }
+  }
+
+  document.getElementById('wizContent').innerHTML = body;
+  setTimeout(()=>{ const f=document.querySelector('#wizContent input,#wizContent textarea'); if(f)f.focus(); },40);
+}
+
+function wizGenerate() {
+  const name    = _wiz.name || 'My Architecture Model';
+  const actors  = _splitLines(_wiz.actors);
+  const procs   = _splitLines(_wiz.processes);
+  const systems = _splitLines(_wiz.systems);
+
+  if (model.elements.length > 0 && !confirm('Generate new model? Your current model will be replaced.')) return;
+
+  const elements = [], relationships = [];
+
+  const actorIds = actors.map(a => {
+    const id=genId(); elements.push({id,layer:'business',type:'BusinessActor',name:a,documentation:'',properties:[]}); return id;
+  });
+  const procIds = procs.map(p => {
+    const id=genId(); elements.push({id,layer:'business',type:'BusinessProcess',name:p,documentation:'',properties:[]}); return id;
+  });
+  const sysIds = systems.map(s => {
+    const id=genId(); elements.push({id,layer:'application',type:'ApplicationComponent',name:s,documentation:'',properties:[]}); return id;
+  });
+
+  // Assignment: actor → process
+  for (const aId of actorIds)
+    for (const pId of procIds)
+      relationships.push({id:genId(),type:'AssignmentRelationship',sourceId:aId,targetId:pId,name:'',documentation:'',directed:false,accessType:'ReadWrite',strength:''});
+
+  // Serving: system → process
+  for (const sId of sysIds)
+    for (const pId of procIds)
+      relationships.push({id:genId(),type:'ServingRelationship',sourceId:sId,targetId:pId,name:'',documentation:'',directed:false,accessType:'ReadWrite',strength:''});
+
+  model = { name, documentation:'', elements, relationships };
+  document.getElementById('modelName').value = name;
+  document.getElementById('modelDoc').value  = '';
+  renderAll(); updateStats();
+  hideWizard();
+  showTab('business');
+}
 function renderTemplateGrid() {
   const grid = document.getElementById('tmplGrid');
   grid.innerHTML = TEMPLATES.map((t, i) => {
