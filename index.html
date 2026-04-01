@@ -386,6 +386,95 @@
     .export-panel h3 { font-size: .88rem; font-weight: 700; margin-bottom: .5rem; color: var(--white); }
     .export-panel p { font-size: .8rem; color: var(--muted); line-height: 1.6; }
 
+    /* ── Tooltip system ─────────────────────────────────────── */
+    .tip-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 15px; height: 15px; border-radius: 50%;
+      background: rgba(138,154,181,.15); color: var(--muted);
+      font-size: .6rem; font-weight: 800; cursor: help; font-style: normal;
+      border: 1px solid rgba(138,154,181,.2); flex-shrink: 0;
+      transition: all .15s; line-height: 1; margin-left: 3px;
+      vertical-align: middle;
+    }
+    .tip-icon:hover { background: rgba(201,163,85,.2); color: var(--gold); border-color: rgba(201,163,85,.4); }
+    #tipPopup {
+      display: none; position: fixed; z-index: 9999;
+      background: #1c2d44; border: 1px solid rgba(201,163,85,.45);
+      border-radius: 9px; padding: .8rem 1rem;
+      max-width: 275px; font-size: .76rem; color: var(--muted);
+      line-height: 1.5; box-shadow: 0 8px 28px rgba(0,0,0,.5);
+      pointer-events: none;
+    }
+    #tipPopup.show { display: block; }
+    #tipPopup .tp-title { font-size: .82rem; font-weight: 700; color: var(--white); display: block; margin-bottom: .3rem; }
+    #tipPopup .tp-ex { color: var(--gold); font-size: .71rem; display: block; margin-top: .4rem; }
+    #tipPopup .tp-ex::before { content: '💡 '; }
+
+    /* ── Modal system ────────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.72); z-index: 2000;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 13px; padding: 2rem 2.25rem;
+      max-width: 780px; width: calc(100vw - 2rem);
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,.55);
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .modal-title { font-size: 1.1rem; font-weight: 800; color: var(--white); }
+    .modal-close {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 1.5rem; cursor: pointer; padding: .1rem .45rem;
+      border-radius: 5px; transition: all .15s; line-height: 1;
+    }
+    .modal-close:hover { color: var(--white); background: rgba(255,255,255,.08); }
+    .modal-sub { font-size: .82rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.65; }
+
+    /* ── Onboarding layers visual ────────────────────────────── */
+    .onboard-layers { display: flex; flex-direction: column; gap: .5rem; margin: 1.1rem 0 1.25rem; }
+    .onboard-layer {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: .8rem 1.1rem; border-radius: 8px; border: 1px solid;
+    }
+    .onboard-layer.biz  { background: rgba(245,230,122,.07); border-color: rgba(245,230,122,.25); }
+    .onboard-layer.app  { background: rgba(122,218,245,.07); border-color: rgba(122,218,245,.25); }
+    .onboard-layer.tech { background: rgba(122,245,160,.07); border-color: rgba(122,245,160,.25); }
+    .onboard-layer-icon { font-size: 1.55rem; flex-shrink: 0; line-height: 1; margin-top: .1rem; }
+    .onboard-layer-name { font-size: .88rem; font-weight: 700; color: var(--white); margin-bottom: .15rem; }
+    .onboard-layer-q    { font-size: .76rem; font-style: italic; margin-bottom: .18rem; }
+    .onboard-layer.biz  .onboard-layer-q { color: var(--biz-text); }
+    .onboard-layer.app  .onboard-layer-q { color: var(--app-text); }
+    .onboard-layer.tech .onboard-layer-q { color: var(--tech-text); }
+    .onboard-layer-ex   { font-size: .73rem; color: var(--muted); }
+    .onboard-actions    { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.6rem; flex-wrap: wrap; align-items: center; }
+
+    /* ── Template gallery ────────────────────────────────────── */
+    .tmpl-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: .7rem; margin: 1.1rem 0 1rem;
+    }
+    .tmpl-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 9px; padding: 1.1rem; cursor: pointer;
+      transition: all .18s; text-align: left;
+      display: flex; flex-direction: column;
+    }
+    .tmpl-card:hover { border-color: var(--gold); background: rgba(201,163,85,.07); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.2); }
+    .tmpl-card-icon { font-size: 1.75rem; margin-bottom: .55rem; line-height: 1; }
+    .tmpl-card-name { font-size: .88rem; font-weight: 700; color: var(--white); margin-bottom: .28rem; }
+    .tmpl-card-desc { font-size: .74rem; color: var(--muted); line-height: 1.45; flex: 1; }
+    .tmpl-card-meta { margin-top: .6rem; display: flex; gap: .3rem; flex-wrap: wrap; }
+    .tmpl-meta-tag  { font-size: .65rem; padding: .1rem .35rem; background: rgba(255,255,255,.06); border-radius: 3px; color: var(--muted); border: 1px solid var(--border); }
+    .tmpl-blank { border-style: dashed; }
+
     /* ── Footer ──────────────────────────────────────────────── */
     .app-footer {
       text-align: center; padding: 1.25rem;
