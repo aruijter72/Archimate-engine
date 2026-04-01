@@ -1381,6 +1381,257 @@ const ELEM_DESCS = {
   TechnologyObject:        'A passive element used or produced by technology behaviour.'
 };
 
+// Short real-world examples for every element type (shown in tooltips)
+const TYPE_EXAMPLES = {
+  BusinessActor:           'Finance Team, Customer Service NL, External Auditor',
+  BusinessRole:            'Account Manager, Approver, Buyer, HR Officer',
+  BusinessCollaboration:   'Joint Procurement Committee, Crisis Response Team',
+  BusinessInterface:       'Help Desk Phone Line, Partner Web Portal, EDI Gateway',
+  BusinessProcess:         'Invoice Approval, Order Intake, Employee Onboarding',
+  BusinessFunction:        'Credit Risk Assessment, Product Cataloguing',
+  BusinessInteraction:     'Joint Board Review, Cross-team Escalation',
+  BusinessEvent:           'Contract Signed, Deadline Reached, Payment Received',
+  BusinessService:         'Invoicing Service, Customer Support Service',
+  BusinessObject:          'Purchase Order, Contract, Employee Record, Report',
+  Contract:                'Service Level Agreement, Framework Contract, NDA',
+  Representation:          'Invoice PDF, Status Report, Application Form',
+  Product:                 'Insurance Package, Software Subscription, Service Bundle',
+  ApplicationComponent:    'SAP ERP, Salesforce CRM, Microsoft Outlook, SharePoint',
+  ApplicationCollaboration:'Integrated Logistics Platform, Shared API Layer',
+  ApplicationInterface:    'REST API, Login Screen, EDI Port, SFTP Endpoint',
+  ApplicationFunction:     'PDF Generation, Data Validation, Tax Calculation',
+  ApplicationInteraction:  'Real-time Data Sync between CRM and ERP',
+  ApplicationProcess:      'Order Processing Workflow, Payroll Run',
+  ApplicationEvent:        'New Order Received, File Upload Completed, Timeout',
+  ApplicationService:      'Invoice Generation Service, Search Service, Auth Service',
+  DataObject:              'Customer Record, Product Catalogue, Order File, Log Entry',
+  Node:                    'Application Server, Cloud VM, Mainframe, Kubernetes Cluster',
+  Device:                  'Barcode Scanner, Network Switch, Printer, Laptop',
+  SystemSoftware:          'Windows Server, Oracle DB, Docker, Kubernetes, Nginx',
+  TechnologyCollaboration: 'Redundant Server Cluster, Active-Active Database Pair',
+  TechnologyInterface:     'TCP Port 443, USB Socket, AS2 Communication Point',
+  Path:                    'Network Link between Data Centres, VPN Tunnel',
+  CommunicationNetwork:    'Corporate LAN, Internet, Peppol Network, VAN',
+  TechnologyFunction:      'Load Balancing, Encryption, Log Rotation',
+  TechnologyProcess:       'Nightly Backup, Certificate Renewal, Patching',
+  TechnologyInteraction:   'Cluster Failover, Replication Sync',
+  TechnologyEvent:         'Server Crash, Certificate Expiry, Disk Full',
+  TechnologyService:       'Authentication Service, Object Storage, DNS',
+  Artifact:                'Deployed JAR File, Config File, Database Dump, Docker Image',
+  TechnologyObject:        'Physical Tape, VM Snapshot, Log Archive'
+};
+
+// Plain-language descriptions of the three ArchiMate aspects (shown in section header tooltips)
+const SECTION_DESCS = {
+  'Active Structure': {
+    title: 'Active Structure — the "doers"',
+    desc:  'Entities that perform actions or hold responsibility. Ask: who or what is doing something here?',
+    ex:    'People, teams, departments, software systems, servers'
+  },
+  'Behaviour': {
+    title: 'Behaviour — the "doing"',
+    desc:  'Actions, processes, and services performed by active structure elements. Ask: what is actually happening?',
+    ex:    'Approval steps, order processing, invoice generation, API calls'
+  },
+  'Passive Structure': {
+    title: 'Passive Structure — the "things"',
+    desc:  'Objects that are created, used, or consumed by behaviour. Ask: what is being processed or produced?',
+    ex:    'Documents, data records, files, contracts, reports'
+  }
+};
+
+// ── Template models ────────────────────────────────────────────────────────────
+const TEMPLATES = [
+  {
+    icon:'✨', name:'Blank Model', desc:'Start with a clean slate and build your model from scratch.',
+    tags:[], isBlank:true,
+    model:{ name:'New Architecture Model', documentation:'', elements:[], relationships:[] }
+  },
+  {
+    icon:'🛎', name:'Customer Service — Retail',
+    desc:'Order management, delivery tracking and invoice queries handled by a CS team.',
+    tags:['Business','Application','Technology'],
+    model:{
+      name:'Customer Service — Retail Brand',
+      documentation:'Retail brand customer service operations covering order management, delivery tracking, and invoice query handling.',
+      elements:[
+        {id:'t1-01',layer:'business',type:'BusinessActor',name:'Customer Service Team',documentation:'Internal team handling inbound customer queries across EU countries.',properties:[]},
+        {id:'t1-02',layer:'business',type:'BusinessActor',name:'Wholesale Customer',documentation:'External retailer placing orders and raising queries about deliveries and invoices.',properties:[]},
+        {id:'t1-03',layer:'business',type:'BusinessRole',name:'Customer Service Representative',documentation:'',properties:[]},
+        {id:'t1-04',layer:'business',type:'BusinessProcess',name:'Order Management',documentation:'Receiving, validating and confirming customer purchase orders.',properties:[]},
+        {id:'t1-05',layer:'business',type:'BusinessProcess',name:'Delivery Tracking',documentation:'Tracking shipments and communicating status updates to customers.',properties:[]},
+        {id:'t1-06',layer:'business',type:'BusinessProcess',name:'Invoice Query Handling',documentation:'Resolving invoice disputes and issuing credit notes.',properties:[]},
+        {id:'t1-07',layer:'business',type:'BusinessService',name:'Customer Support Service',documentation:'',properties:[]},
+        {id:'t1-08',layer:'application',type:'ApplicationComponent',name:'CRM System',documentation:'Customer relationship management platform storing customer data, orders and interaction history.',properties:[{key:'Example',value:'Salesforce, Microsoft Dynamics'}]},
+        {id:'t1-09',layer:'application',type:'ApplicationComponent',name:'Order Tracking Portal',documentation:'Web portal for customers and CS staff to view live order and delivery status.',properties:[]},
+        {id:'t1-10',layer:'application',type:'ApplicationService',name:'Case Management Service',documentation:'Service handling customer case creation, routing and resolution tracking.',properties:[]},
+        {id:'t1-11',layer:'technology',type:'Node',name:'Cloud Application Server',documentation:'Cloud-hosted server running the CRM and portal applications.',properties:[{key:'Example',value:'AWS EC2, Azure App Service'}]},
+        {id:'t1-12',layer:'technology',type:'Artifact',name:'Customer & Order Database',documentation:'Persistent data store for customer records, order history and case data.',properties:[]}
+      ],
+      relationships:[
+        {id:'tr1-01',type:'AssignmentRelationship',sourceId:'t1-01',targetId:'t1-03',name:'',documentation:''},
+        {id:'tr1-02',type:'AssignmentRelationship',sourceId:'t1-03',targetId:'t1-04',name:'',documentation:''},
+        {id:'tr1-03',type:'AssignmentRelationship',sourceId:'t1-03',targetId:'t1-05',name:'',documentation:''},
+        {id:'tr1-04',type:'AssignmentRelationship',sourceId:'t1-03',targetId:'t1-06',name:'',documentation:''},
+        {id:'tr1-05',type:'RealizationRelationship',sourceId:'t1-04',targetId:'t1-07',name:'',documentation:''},
+        {id:'tr1-06',type:'ServingRelationship',sourceId:'t1-10',targetId:'t1-07',name:'',documentation:''},
+        {id:'tr1-07',type:'RealizationRelationship',sourceId:'t1-08',targetId:'t1-10',name:'',documentation:''},
+        {id:'tr1-08',type:'RealizationRelationship',sourceId:'t1-11',targetId:'t1-08',name:'',documentation:''},
+        {id:'tr1-09',type:'ServingRelationship',sourceId:'t1-08',targetId:'t1-02',name:'self-service access',documentation:''}
+      ]
+    }
+  },
+  {
+    icon:'🖥', name:'IT Help Desk',
+    desc:'Incident registration and resolution process supported by a ticketing system.',
+    tags:['Business','Application','Technology'],
+    model:{
+      name:'IT Help Desk',
+      documentation:'Standard IT help desk model covering incident registration and resolution.',
+      elements:[
+        {id:'t2-01',layer:'business',type:'BusinessActor',name:'End User',documentation:'Employee or user reporting an IT issue.',properties:[]},
+        {id:'t2-02',layer:'business',type:'BusinessActor',name:'IT Help Desk Team',documentation:'Internal IT support team handling incidents.',properties:[]},
+        {id:'t2-03',layer:'business',type:'BusinessRole',name:'Help Desk Agent',documentation:'',properties:[]},
+        {id:'t2-04',layer:'business',type:'BusinessProcess',name:'Incident Registration',documentation:'Logging an incoming IT issue in the ticketing system.',properties:[]},
+        {id:'t2-05',layer:'business',type:'BusinessProcess',name:'Incident Resolution',documentation:'Diagnosing and resolving the reported IT issue.',properties:[]},
+        {id:'t2-06',layer:'business',type:'BusinessService',name:'IT Support Service',documentation:'',properties:[]},
+        {id:'t2-07',layer:'application',type:'ApplicationComponent',name:'Ticketing System',documentation:'System for tracking incidents end-to-end.',properties:[{key:'Example',value:'ServiceNow, Jira Service Management, Freshdesk'}]},
+        {id:'t2-08',layer:'application',type:'ApplicationComponent',name:'Knowledge Base',documentation:'Repository of known issues and step-by-step resolution guides.',properties:[]},
+        {id:'t2-09',layer:'application',type:'ApplicationService',name:'Ticket Management Service',documentation:'',properties:[]},
+        {id:'t2-10',layer:'technology',type:'Node',name:'Cloud Server',documentation:'',properties:[]},
+        {id:'t2-11',layer:'technology',type:'Artifact',name:'Incident Database',documentation:'',properties:[]}
+      ],
+      relationships:[
+        {id:'tr2-01',type:'AssignmentRelationship',sourceId:'t2-02',targetId:'t2-03',name:'',documentation:''},
+        {id:'tr2-02',type:'AssignmentRelationship',sourceId:'t2-03',targetId:'t2-04',name:'',documentation:''},
+        {id:'tr2-03',type:'AssignmentRelationship',sourceId:'t2-03',targetId:'t2-05',name:'',documentation:''},
+        {id:'tr2-04',type:'TriggeringRelationship',sourceId:'t2-04',targetId:'t2-05',name:'',documentation:''},
+        {id:'tr2-05',type:'RealizationRelationship',sourceId:'t2-04',targetId:'t2-06',name:'',documentation:''},
+        {id:'tr2-06',type:'RealizationRelationship',sourceId:'t2-07',targetId:'t2-09',name:'',documentation:''},
+        {id:'tr2-07',type:'ServingRelationship',sourceId:'t2-09',targetId:'t2-06',name:'',documentation:''},
+        {id:'tr2-08',type:'RealizationRelationship',sourceId:'t2-10',targetId:'t2-07',name:'',documentation:''}
+      ]
+    }
+  },
+  {
+    icon:'🛒', name:'Order-to-Cash',
+    desc:'End-to-end flow from customer order intake through fulfilment and invoicing.',
+    tags:['Business','Application','Technology'],
+    model:{
+      name:'Order-to-Cash Process',
+      documentation:'Core order-to-cash process from purchase order receipt through delivery and invoice payment.',
+      elements:[
+        {id:'t3-01',layer:'business',type:'BusinessActor',name:'Customer',documentation:'',properties:[]},
+        {id:'t3-02',layer:'business',type:'BusinessActor',name:'Sales Team',documentation:'',properties:[]},
+        {id:'t3-03',layer:'business',type:'BusinessActor',name:'Finance Team',documentation:'',properties:[]},
+        {id:'t3-04',layer:'business',type:'BusinessRole',name:'Order Manager',documentation:'',properties:[]},
+        {id:'t3-05',layer:'business',type:'BusinessProcess',name:'Order Intake',documentation:'Receiving and validating customer purchase orders.',properties:[]},
+        {id:'t3-06',layer:'business',type:'BusinessProcess',name:'Order Fulfilment',documentation:'Picking, packing and shipping goods to the customer.',properties:[]},
+        {id:'t3-07',layer:'business',type:'BusinessProcess',name:'Invoicing',documentation:'Generating and sending the invoice after goods are despatched.',properties:[]},
+        {id:'t3-08',layer:'business',type:'BusinessService',name:'Order Management Service',documentation:'',properties:[]},
+        {id:'t3-09',layer:'business',type:'BusinessObject',name:'Purchase Order',documentation:'',properties:[]},
+        {id:'t3-10',layer:'business',type:'BusinessObject',name:'Invoice',documentation:'',properties:[]},
+        {id:'t3-11',layer:'application',type:'ApplicationComponent',name:'ERP System',documentation:'Enterprise resource planning system managing orders, inventory and finance.',properties:[{key:'Example',value:'SAP S/4HANA, Microsoft Dynamics 365'}]},
+        {id:'t3-12',layer:'application',type:'ApplicationService',name:'Order Processing Service',documentation:'',properties:[]},
+        {id:'t3-13',layer:'application',type:'ApplicationService',name:'Invoice Generation Service',documentation:'',properties:[]},
+        {id:'t3-14',layer:'technology',type:'Node',name:'ERP Application Server',documentation:'',properties:[]},
+        {id:'t3-15',layer:'technology',type:'Artifact',name:'Order & Financial Database',documentation:'',properties:[]}
+      ],
+      relationships:[
+        {id:'tr3-01',type:'AssignmentRelationship',sourceId:'t3-02',targetId:'t3-04',name:'',documentation:''},
+        {id:'tr3-02',type:'AssignmentRelationship',sourceId:'t3-04',targetId:'t3-05',name:'',documentation:''},
+        {id:'tr3-03',type:'TriggeringRelationship',sourceId:'t3-05',targetId:'t3-06',name:'',documentation:''},
+        {id:'tr3-04',type:'TriggeringRelationship',sourceId:'t3-06',targetId:'t3-07',name:'',documentation:''},
+        {id:'tr3-05',type:'RealizationRelationship',sourceId:'t3-05',targetId:'t3-08',name:'',documentation:''},
+        {id:'tr3-06',type:'AccessRelationship',sourceId:'t3-05',targetId:'t3-09',name:'',documentation:'',accessType:'ReadWrite'},
+        {id:'tr3-07',type:'AccessRelationship',sourceId:'t3-07',targetId:'t3-10',name:'',documentation:'',accessType:'Write'},
+        {id:'tr3-08',type:'ServingRelationship',sourceId:'t3-12',targetId:'t3-08',name:'',documentation:''},
+        {id:'tr3-09',type:'RealizationRelationship',sourceId:'t3-11',targetId:'t3-12',name:'',documentation:''},
+        {id:'tr3-10',type:'RealizationRelationship',sourceId:'t3-11',targetId:'t3-13',name:'',documentation:''},
+        {id:'tr3-11',type:'RealizationRelationship',sourceId:'t3-14',targetId:'t3-11',name:'',documentation:''}
+      ]
+    }
+  },
+  {
+    icon:'🧑‍💼', name:'HR Onboarding',
+    desc:'Employee onboarding from contract preparation through IT setup and induction.',
+    tags:['Business','Application','Technology'],
+    model:{
+      name:'HR Employee Onboarding',
+      documentation:'Employee onboarding process covering contract preparation, IT account setup and first-day induction.',
+      elements:[
+        {id:'t4-01',layer:'business',type:'BusinessActor',name:'New Employee',documentation:'',properties:[]},
+        {id:'t4-02',layer:'business',type:'BusinessActor',name:'HR Team',documentation:'',properties:[]},
+        {id:'t4-03',layer:'business',type:'BusinessActor',name:'IT Department',documentation:'',properties:[]},
+        {id:'t4-04',layer:'business',type:'BusinessRole',name:'HR Officer',documentation:'',properties:[]},
+        {id:'t4-05',layer:'business',type:'BusinessProcess',name:'Contract & Document Preparation',documentation:'Preparing the employment contract, policies and welcome pack.',properties:[]},
+        {id:'t4-06',layer:'business',type:'BusinessProcess',name:'IT Account Setup',documentation:'Creating email address, system access rights and device provisioning.',properties:[]},
+        {id:'t4-07',layer:'business',type:'BusinessProcess',name:'Onboarding Induction',documentation:'First-day session covering company, team and role introduction.',properties:[]},
+        {id:'t4-08',layer:'business',type:'BusinessService',name:'HR Onboarding Service',documentation:'',properties:[]},
+        {id:'t4-09',layer:'business',type:'BusinessObject',name:'Employment Contract',documentation:'',properties:[]},
+        {id:'t4-10',layer:'application',type:'ApplicationComponent',name:'HR Information System (HRIS)',documentation:'System of record for employee data.',properties:[{key:'Example',value:'Workday, SAP SuccessFactors, BambooHR'}]},
+        {id:'t4-11',layer:'application',type:'ApplicationComponent',name:'Identity & Access Management',documentation:'System managing user accounts, roles and access rights.',properties:[{key:'Example',value:'Azure AD, Okta, Google Workspace'}]},
+        {id:'t4-12',layer:'application',type:'ApplicationService',name:'Employee Management Service',documentation:'',properties:[]},
+        {id:'t4-13',layer:'technology',type:'Node',name:'Cloud HR Server',documentation:'',properties:[]},
+        {id:'t4-14',layer:'technology',type:'Artifact',name:'Employee Database',documentation:'',properties:[]}
+      ],
+      relationships:[
+        {id:'tr4-01',type:'AssignmentRelationship',sourceId:'t4-02',targetId:'t4-04',name:'',documentation:''},
+        {id:'tr4-02',type:'AssignmentRelationship',sourceId:'t4-04',targetId:'t4-05',name:'',documentation:''},
+        {id:'tr4-03',type:'AssignmentRelationship',sourceId:'t4-04',targetId:'t4-07',name:'',documentation:''},
+        {id:'tr4-04',type:'AssignmentRelationship',sourceId:'t4-03',targetId:'t4-06',name:'',documentation:''},
+        {id:'tr4-05',type:'TriggeringRelationship',sourceId:'t4-05',targetId:'t4-06',name:'',documentation:''},
+        {id:'tr4-06',type:'TriggeringRelationship',sourceId:'t4-06',targetId:'t4-07',name:'',documentation:''},
+        {id:'tr4-07',type:'RealizationRelationship',sourceId:'t4-05',targetId:'t4-08',name:'',documentation:''},
+        {id:'tr4-08',type:'AccessRelationship',sourceId:'t4-05',targetId:'t4-09',name:'',documentation:'',accessType:'Write'},
+        {id:'tr4-09',type:'RealizationRelationship',sourceId:'t4-10',targetId:'t4-12',name:'',documentation:''},
+        {id:'tr4-10',type:'ServingRelationship',sourceId:'t4-12',targetId:'t4-08',name:'',documentation:''},
+        {id:'tr4-11',type:'RealizationRelationship',sourceId:'t4-13',targetId:'t4-10',name:'',documentation:''}
+      ]
+    }
+  },
+  {
+    icon:'🚀', name:'Software Delivery',
+    desc:'Development pipeline from coding through automated testing to production deployment.',
+    tags:['Business','Application','Technology'],
+    model:{
+      name:'Software Development & Delivery',
+      documentation:'Software delivery pipeline covering development, automated testing and production deployment.',
+      elements:[
+        {id:'t5-01',layer:'business',type:'BusinessActor',name:'Development Team',documentation:'',properties:[]},
+        {id:'t5-02',layer:'business',type:'BusinessActor',name:'Product Owner',documentation:'Defines requirements and prioritises the development backlog.',properties:[]},
+        {id:'t5-03',layer:'business',type:'BusinessRole',name:'Developer',documentation:'',properties:[]},
+        {id:'t5-04',layer:'business',type:'BusinessRole',name:'DevOps Engineer',documentation:'',properties:[]},
+        {id:'t5-05',layer:'business',type:'BusinessProcess',name:'Development',documentation:'Writing, reviewing and merging code for new features or bug fixes.',properties:[]},
+        {id:'t5-06',layer:'business',type:'BusinessProcess',name:'Testing & QA',documentation:'Automated and manual quality assurance before release.',properties:[]},
+        {id:'t5-07',layer:'business',type:'BusinessProcess',name:'Deployment',documentation:'Releasing the validated software to the production environment.',properties:[]},
+        {id:'t5-08',layer:'business',type:'BusinessService',name:'Software Delivery Service',documentation:'',properties:[]},
+        {id:'t5-09',layer:'application',type:'ApplicationComponent',name:'Source Control (Git)',documentation:'Version control repository for all source code.',properties:[{key:'Example',value:'GitHub, GitLab, Azure DevOps'}]},
+        {id:'t5-10',layer:'application',type:'ApplicationComponent',name:'CI/CD Pipeline',documentation:'Automated build, test and deploy pipeline.',properties:[{key:'Example',value:'GitHub Actions, Jenkins, Azure Pipelines'}]},
+        {id:'t5-11',layer:'application',type:'ApplicationService',name:'Build & Test Service',documentation:'',properties:[]},
+        {id:'t5-12',layer:'application',type:'ApplicationService',name:'Deployment Service',documentation:'',properties:[]},
+        {id:'t5-13',layer:'technology',type:'Node',name:'Build Server',documentation:'',properties:[]},
+        {id:'t5-14',layer:'technology',type:'Node',name:'Production Server',documentation:'',properties:[]},
+        {id:'t5-15',layer:'technology',type:'Artifact',name:'Deployment Package',documentation:'Compiled application artifact deployed to the production server.',properties:[]}
+      ],
+      relationships:[
+        {id:'tr5-01',type:'AssignmentRelationship',sourceId:'t5-01',targetId:'t5-03',name:'',documentation:''},
+        {id:'tr5-02',type:'AssignmentRelationship',sourceId:'t5-01',targetId:'t5-04',name:'',documentation:''},
+        {id:'tr5-03',type:'AssignmentRelationship',sourceId:'t5-03',targetId:'t5-05',name:'',documentation:''},
+        {id:'tr5-04',type:'AssignmentRelationship',sourceId:'t5-04',targetId:'t5-07',name:'',documentation:''},
+        {id:'tr5-05',type:'TriggeringRelationship',sourceId:'t5-05',targetId:'t5-06',name:'',documentation:''},
+        {id:'tr5-06',type:'TriggeringRelationship',sourceId:'t5-06',targetId:'t5-07',name:'',documentation:''},
+        {id:'tr5-07',type:'RealizationRelationship',sourceId:'t5-05',targetId:'t5-08',name:'',documentation:''},
+        {id:'tr5-08',type:'RealizationRelationship',sourceId:'t5-10',targetId:'t5-11',name:'',documentation:''},
+        {id:'tr5-09',type:'RealizationRelationship',sourceId:'t5-10',targetId:'t5-12',name:'',documentation:''},
+        {id:'tr5-10',type:'ServingRelationship',sourceId:'t5-11',targetId:'t5-08',name:'',documentation:''},
+        {id:'tr5-11',type:'RealizationRelationship',sourceId:'t5-13',targetId:'t5-10',name:'',documentation:''},
+        {id:'tr5-12',type:'RealizationRelationship',sourceId:'t5-14',targetId:'t5-15',name:'',documentation:''}
+      ]
+    }
+  }
+];
+
 // Allowed relationship rules (summarised)
 const REL_RULES = {
   AssociationRelationship:    'Any concept → any concept',
