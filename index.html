@@ -2499,6 +2499,69 @@ function renderHelp() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// LICENSE
+// ══════════════════════════════════════════════════════════════
+// To deploy this tool for your organisation, contact:
+//   Arnold Ruijter IT — arnold.ruijter@outlook.com — arnoldruijter.it
+//
+// Fill in the fields below with the details provided in your license agreement.
+// Leave all fields empty for evaluation / development use (localhost is always exempt).
+const LICENSE = {
+  key:     '',   // License key issued by Arnold Ruijter IT
+  company: '',   // Your organisation name  e.g. 'Acme Corporation'
+  domain:  '',   // Domain this tool runs on e.g. 'archimate.acme.com'
+  expires: ''    // Expiry date YYYY-MM-DD, or '' for perpetual
+};
+
+(function checkLicense() {
+  const host = window.location.hostname;
+  const exempt = ['localhost','127.0.0.1',''].includes(host)
+               || host.endsWith('.arnoldruijter.it')
+               || host.endsWith('.github.io');
+  if (exempt) return;
+
+  function banner(msg) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;'
+      + 'background:#1a0c00;border-top:2px solid #f5a050;padding:.6rem 1.5rem;'
+      + 'display:flex;align-items:center;gap:1rem;font-size:.8rem;color:#f5c080';
+    el.innerHTML = `<span style="font-size:1.1rem">⚠</span>`
+      + `<span>${msg} Contact <a href="mailto:arnold.ruijter@outlook.com" `
+      + `style="color:#c9a355">arnold.ruijter@outlook.com</a> for a license. `
+      + `The tool remains fully functional during evaluation.</span>`
+      + `<button onclick="this.parentElement.remove()" style="margin-left:auto;`
+      + `background:transparent;border:1px solid rgba(245,160,80,.4);border-radius:4px;`
+      + `color:#f5a050;cursor:pointer;padding:.2rem .7rem;font-size:.75rem">Dismiss</button>`;
+    document.body.appendChild(el);
+  }
+
+  if (!LICENSE.key || !LICENSE.domain) {
+    banner('<strong style="color:#f5a050">ArchiMate Engine — unlicensed installation.</strong>');
+    return;
+  }
+  if (host !== LICENSE.domain && !host.endsWith('.' + LICENSE.domain)) {
+    banner('<strong style="color:#f5a050">ArchiMate Engine — running on an unlicensed domain.</strong>');
+    return;
+  }
+  if (LICENSE.expires && new Date(LICENSE.expires) < new Date()) {
+    banner('<strong style="color:#f5a050">ArchiMate Engine — license expired ' + LICENSE.expires + '.</strong>');
+    return;
+  }
+  // Valid license — show company badge
+  if (LICENSE.company) {
+    document.addEventListener('DOMContentLoaded', () => {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'font-size:.65rem;color:var(--muted);border:1px solid var(--border);'
+        + 'border-radius:4px;padding:.1rem .6rem;white-space:nowrap;flex-shrink:0';
+      badge.title = 'Licensed to ' + LICENSE.company
+        + (LICENSE.expires ? ' · expires ' + LICENSE.expires : ' · perpetual');
+      badge.textContent = '✓ ' + LICENSE.company;
+      document.querySelector('.header-actions')?.prepend(badge);
+    });
+  }
+})();
+
+// ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
 initTipData();
