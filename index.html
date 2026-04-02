@@ -1829,10 +1829,10 @@ function renderLayer(layer) {
       html += `
       <table class="elem-table">
         <thead><tr>
-          <th style="width:170px">Type</th>
-          <th style="width:210px">Name *</th>
-          <th>Documentation</th>
-          <th style="width:220px">Custom Properties</th>
+          <th style="width:170px">${t('col-type')}</th>
+          <th style="width:210px">${t('col-name')}</th>
+          <th>${t('col-doc')}</th>
+          <th style="width:220px">${t('col-props')}</th>
           <th style="width:32px"></th>
         </tr></thead>
         <tbody>`;
@@ -1842,12 +1842,12 @@ function renderLayer(layer) {
           <td><span class="type-badge ${cc}">${TYPE_LABELS[el.type]}</span></td>
           <td>
             <input type="text" class="elem-input" data-eid="${el.id}"
-                   value="${esc(el.name)}" placeholder="Enter name…"
+                   value="${esc(el.name)}" placeholder="${t('ph-name')}"
                    oninput="setElem('${el.id}','name',this.value)">
           </td>
           <td>
             <textarea class="elem-textarea" rows="2"
-                      placeholder="Free-text documentation / description…"
+                      placeholder="${t('ph-doc')}"
                       oninput="setElem('${el.id}','documentation',this.value)">${esc(el.documentation)}</textarea>
           </td>
           <td>
@@ -1856,19 +1856,19 @@ function renderLayer(layer) {
           const p = el.properties[i];
           html += `
               <div class="prop-row">
-                <input class="prop-key" type="text" placeholder="Key"
+                <input class="prop-key" type="text" placeholder="${t('ph-propkey')}"
                        value="${esc(p.key)}" oninput="setProp('${el.id}',${i},'key',this.value)">
-                <input class="prop-val" type="text" placeholder="Value"
+                <input class="prop-val" type="text" placeholder="${t('ph-propval')}"
                        value="${esc(p.value)}" oninput="setProp('${el.id}',${i},'value',this.value)">
                 <button class="btn-del-sm" onclick="delProp('${el.id}',${i})" title="Remove property">×</button>
               </div>`;
         }
         html += `</div>
             <div class="prop-field-labels">
-              <span class="prop-field-label" style="max-width:110px">Key <i class="tip-icon" onmouseenter="showTipById(this,'prop-key')" onmouseleave="hideTip()">?</i></span>
-              <span class="prop-field-label">Value <i class="tip-icon" onmouseenter="showTipById(this,'prop-val')" onmouseleave="hideTip()">?</i></span>
+              <span class="prop-field-label" style="max-width:110px">${t('ph-propkey')} <i class="tip-icon" onmouseenter="showTipById(this,'prop-key')" onmouseleave="hideTip()">?</i></span>
+              <span class="prop-field-label">${t('ph-propval')} <i class="tip-icon" onmouseenter="showTipById(this,'prop-val')" onmouseleave="hideTip()">?</i></span>
             </div>
-            <button class="btn-add-prop" onclick="addProp('${el.id}')">+ add property</button>
+            <button class="btn-add-prop" onclick="addProp('${el.id}')">${t('add-prop')}</button>
           </td>
           <td><button class="btn-del-sm" style="font-size:1.1rem" onclick="deleteElement('${el.id}')" title="Delete element">🗑</button></td>
         </tr>`;
