@@ -1619,15 +1619,15 @@ function renderWizStep() {
       <div class="wiz-actions"><button class="wiz-back" onclick="wizBack()">← Back</button></div>`;
     } else {
       body += `
-      <div class="wiz-q">Your model preview</div>
-      <div class="wiz-hint">Here's what will be generated. Click <strong>Generate Model</strong> to open it in the editor — you can rename, add, or remove anything afterwards.</div>
+      <div class="wiz-q">${t('wiz-s5-t')}</div>
+      <div class="wiz-hint"></div>
       <div class="wiz-preview"><div class="wiz-preview-title biz">🏢 Business Actors (${actors.length})</div>${actorTags}</div>
       <div class="wiz-preview"><div class="wiz-preview-title biz">⚙ Business Processes (${procs.length})</div>${procTags}</div>
       <div class="wiz-preview"><div class="wiz-preview-title app">💻 Application Components (${systems.length})</div>${sysTags}</div>
       <div class="wiz-preview"><div class="wiz-preview-title rel">🔗 Auto-generated Relationships (${relCount})</div>${relLabel}</div>
       <div class="wiz-actions">
-        <button class="wiz-back" onclick="wizBack()">← Back</button>
-        <button class="btn btn-primary" onclick="wizGenerate()">✓ Generate Model</button>
+        <button class="wiz-back" onclick="wizBack()">${t('wiz-back')}</button>
+        <button class="btn btn-primary" onclick="wizGenerate()">${t('wiz-gen')}</button>
       </div>`;
     }
   }
