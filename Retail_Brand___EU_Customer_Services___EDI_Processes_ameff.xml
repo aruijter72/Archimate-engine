@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.opengroup.org/xsd/archimate/3.0/"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.1/archimate3_Diagram.xsd"
+       identifier="id-mnhxqioo0m29m" version="1.1">
+  <name xml:lang="en">Retail Brand — EU Customer Services &amp; EDI Processes</name>
+  <documentation xml:lang="en">ArchiMate 3 model of a retail brand's EU customer service operations covering the five core B2B processes: Replenishment Order Management, Despatch Advice &amp; Shipment Tracking, Invoice &amp; eInvoicing, Sales Reporting (sell-through), and Inventory Reporting. Standards covered: UN/EDIFACT (ORDERS, ORDRSP, DESADV, INVOIC, SLSRPT, INVRPT), Peppol / EN 16931 eInvoicing, GS1 (GTIN, GLN), and REST/XML APIs. Based on a typical fashion/apparel brand with wholesale customers across EU countries.</documentation>
+  <elements>
+    <element identifier="biz-actor-brand" xsi:type="BusinessActor">
+      <name xml:lang="en">Retail Brand (EU Operations)</name>
+      <documentation xml:lang="en">The fashion / apparel brand operating across EU markets. Owns the product range, manages wholesale accounts, and is responsible for order fulfilment, invoicing, and compliance with EU trade and tax regulations.</documentation>
+    </element>
+    <element identifier="biz-actor-cs-eu" xsi:type="BusinessActor">
+      <name xml:lang="en">EU Customer Service Teams</name>
+      <documentation xml:lang="en">Country-level customer service teams across EU (e.g. NL, DE, FR, UK, IT, ES). Responsible for order intake, query handling, despatch tracking, and invoice dispute resolution for wholesale accounts.</documentation>
+    </element>
+    <element identifier="biz-actor-customer" xsi:type="BusinessActor">
+      <name xml:lang="en">Wholesale Customer / Retailer</name>
+      <documentation xml:lang="en">Department stores, independent retailers, and key accounts that purchase from the brand on a wholesale basis. They place replenishment orders, receive shipments, process invoices, and report sell-through and inventory data back to the brand.</documentation>
+    </element>
+    <element identifier="biz-actor-3pl" xsi:type="BusinessActor">
+      <name xml:lang="en">3PL / Logistics Partner</name>
+      <documentation xml:lang="en">Third-party logistics provider responsible for warehouse operations, pick/pack, and carrier management. Generates despatch advice (ASN) and shipment tracking events.</documentation>
+    </element>
+    <element identifier="biz-actor-finance" xsi:type="BusinessActor">
+      <name xml:lang="en">Finance &amp; Accounts Receivable</name>
+      <documentation xml:lang="en">Internal finance team responsible for invoice generation, credit management, VAT compliance, and eInvoicing under EU Directive 2014/55/EU and national transpositions. Handles credit notes and dispute resolution.</documentation>
+    </element>
+    <element identifier="biz-role-cs-rep" xsi:type="BusinessRole">
+      <name xml:lang="en">Customer Service Representative</name>
+      <documentation xml:lang="en">Handles inbound order queries, order entry, delivery status checks, returns, and complaint resolution. First point of contact for wholesale accounts.</documentation>
+    </element>
+    <element identifier="biz-role-edi-coord" xsi:type="BusinessRole">
+      <name xml:lang="en">EDI Coordinator</name>
+      <documentation xml:lang="en">Manages EDI trading partner onboarding, message monitoring, error handling, and reconciliation of EDIFACT/API transactions. Liaises between CS teams and the IT/EDI platform team.</documentation>
+    </element>
+    <element identifier="biz-role-order-mgr" xsi:type="BusinessRole">
+      <name xml:lang="en">Order Manager</name>
+      <documentation xml:lang="en">Responsible for order validation, allocation, and fulfilment planning. Coordinates between customer service, warehouse, and the 3PL to ensure on-time delivery.</documentation>
+    </element>
+    <element identifier="biz-role-finance-mgr" xsi:type="BusinessRole">
+      <name xml:lang="en">Finance Manager / Credit Controller</name>
+      <documentation xml:lang="en">Manages invoice issuance, credit limits, payment terms, and VAT compliance per country. Responsible for eInvoicing compliance (Peppol, EN 16931) where mandated.</documentation>
+    </element>
+    <element identifier="biz-role-logistics" xsi:type="BusinessRole">
+      <name xml:lang="en">Logistics Coordinator</name>
+      <documentation xml:lang="en">Coordinates with the 3PL on despatch planning, carrier selection, and shipment tracking. Ensures accurate and timely DESADV messages are sent to customers.</documentation>
+    </element>
+    <element identifier="biz-proc-order" xsi:type="BusinessProcess">
+      <name xml:lang="en">1. Replenishment Order Management</name>
+      <documentation xml:lang="en">End-to-end process for receiving, validating, and confirming wholesale replenishment orders from customers. Covers EDI ORDERS message receipt (or portal/API entry), inventory allocation, and ORDRSP (order response) issuance. Supports regular seasonal replenishment as well as open-to-buy (OTB) top-up orders.</documentation>
+    </element>
+    <element identifier="biz-proc-desadv" xsi:type="BusinessProcess">
+      <name xml:lang="en">2. Despatch Advice &amp; Shipment Tracking</name>
+      <documentation xml:lang="en">Process for generating and sending Advance Shipment Notifications (ASN / DESADV) to customers once goods are picked and despatched by the 3PL. Includes carton-level GS1-128 label data, carrier tracking references, and expected delivery dates. Customer sends back RECADV (receiving advice) upon goods receipt.</documentation>
+    </element>
+    <element identifier="biz-proc-invoice" xsi:type="BusinessProcess">
+      <name xml:lang="en">3. Invoice Processing &amp; eInvoicing</name>
+      <documentation xml:lang="en">Invoicing process covering generation of commercial invoices after despatch, VAT calculation per country, credit note issuance, and compliance with EU eInvoicing regulations. Invoices are sent via EDIFACT INVOIC message and/or Peppol BIS Billing 3.0 (EN 16931) for countries requiring structured electronic invoicing.</documentation>
+    </element>
+    <element identifier="biz-proc-slsrpt" xsi:type="BusinessProcess">
+      <name xml:lang="en">4. Sales Reporting (Sell-Through)</name>
+      <documentation xml:lang="en">Process for collecting and processing sell-through (POS) data from wholesale customers. Customers submit weekly or monthly sales reports (SLSRPT or flat-file equivalent) showing units sold per SKU/location. Data feeds brand merchandising, forecasting, and replenishment planning.</documentation>
+    </element>
+    <element identifier="biz-proc-invrpt" xsi:type="BusinessProcess">
+      <name xml:lang="en">5. Inventory Reporting</name>
+      <documentation xml:lang="en">Process for collecting stock-on-hand data from customers and own distribution centres. Customers submit INVRPT messages (or portal uploads) covering stock levels per SKU/location. Used for inventory visibility, VMI (Vendor Managed Inventory), and replenishment triggers.</documentation>
+    </element>
+    <element identifier="biz-svc-order" xsi:type="BusinessService">
+      <name xml:lang="en">Order Management Service</name>
+      <documentation xml:lang="en">External-facing service provided to wholesale customers enabling order placement, order status tracking, and order confirmation.</documentation>
+    </element>
+    <element identifier="biz-svc-logistics" xsi:type="BusinessService">
+      <name xml:lang="en">Logistics &amp; Fulfilment Service</name>
+      <documentation xml:lang="en">Service covering shipment notification, carrier tracking, and proof-of-delivery to wholesale customers.</documentation>
+    </element>
+    <element identifier="biz-svc-invoicing" xsi:type="BusinessService">
+      <name xml:lang="en">eInvoicing Service</name>
+      <documentation xml:lang="en">Compliant invoice delivery service supporting EDIFACT INVOIC and Peppol BIS Billing 3.0 for EU markets requiring structured electronic invoicing.</documentation>
+    </element>
+    <element identifier="biz-svc-reporting" xsi:type="BusinessService">
+      <name xml:lang="en">Sales &amp; Inventory Reporting Service</name>
+      <documentation xml:lang="en">Service that receives, validates, and processes sell-through (SLSRPT) and inventory (INVRPT) data from wholesale customers, making it available to merchandising and planning teams.</documentation>
+    </element>
+    <element identifier="biz-obj-po" xsi:type="BusinessObject">
+      <name xml:lang="en">Purchase Order (ORDERS D96A)</name>
+      <documentation xml:lang="en">Formal purchase order from a wholesale customer to the brand. Contains buyer GLN, seller GLN, line items with GTIN, ordered quantities, requested delivery date, and price agreements. Transmitted via EDIFACT ORDERS D96A or equivalent REST payload.</documentation>
+    </element>
+    <element identifier="biz-obj-ordrsp" xsi:type="BusinessObject">
+      <name xml:lang="en">Order Response (ORDRSP)</name>
+      <documentation xml:lang="en">Brand's response to a customer purchase order, confirming accepted lines, back-orders, substitutions, or cancellations. Includes confirmed delivery date and quantities per line.</documentation>
+    </element>
+    <element identifier="biz-obj-desadv" xsi:type="BusinessObject">
+      <name xml:lang="en">Despatch Advice / ASN (DESADV)</name>
+      <documentation xml:lang="en">Advance Shipment Notification sent by the brand/3PL to the customer prior to delivery. Contains SSCC carton labels, GTIN/qty per carton, carrier and tracking reference, and expected delivery date.</documentation>
+    </element>
+    <element identifier="biz-obj-invoice" xsi:type="BusinessObject">
+      <name xml:lang="en">Invoice (INVOIC / Peppol BIS)</name>
+      <documentation xml:lang="en">Commercial invoice issued after despatch. Includes line-level GTIN, quantities, unit prices, VAT breakdown per country, and payment terms. Transmitted via EDIFACT INVOIC or Peppol BIS Billing 3.0 (UBL 2.1 / CII) depending on customer/country capability.</documentation>
+    </element>
+    <element identifier="biz-obj-creditnote" xsi:type="BusinessObject">
+      <name xml:lang="en">Credit Note</name>
+      <documentation xml:lang="en">Document issued to reverse or partially offset an invoice. Generated for returns, shortages, pricing disputes, or damaged goods. Transmitted via EDIFACT CREADV or Peppol BIS Credit Note 3.0.</documentation>
+    </element>
+    <element identifier="biz-obj-slsrpt" xsi:type="BusinessObject">
+      <name xml:lang="en">Sales Report (SLSRPT)</name>
+      <documentation xml:lang="en">Sell-through report submitted by the wholesale customer showing units sold per SKU, per store location, for a given period. Used by the brand for sell-through analytics, OTB, and replenishment.</documentation>
+    </element>
+    <element identifier="biz-obj-invrpt" xsi:type="BusinessObject">
+      <name xml:lang="en">Inventory Report (INVRPT)</name>
+      <documentation xml:lang="en">Stock-on-hand report from customer locations or the brand's own DC. Shows available inventory per GTIN per location. Feeds VMI and automated replenishment.</documentation>
+    </element>
+    <element identifier="app-comp-erp" xsi:type="ApplicationComponent">
+      <name xml:lang="en">ERP System (SAP S/4HANA)</name>
+      <documentation xml:lang="en">Core enterprise resource planning system managing order-to-cash (O2C), financial accounting, and inventory management. Acts as the system of record for orders, invoices, customer master, and product master (including GTIN mapping).</documentation>
+    </element>
+    <element identifier="app-comp-edi" xsi:type="ApplicationComponent">
+      <name xml:lang="en">EDI / B2B Gateway Platform</name>
+      <documentation xml:lang="en">Middleware platform handling EDIFACT message translation, routing, and trading partner management. Converts between internal ERP formats and external EDIFACT messages. Manages AS2, SFTP, and VAN connectivity. Examples: Seeburger BIS, OpenText TN, MuleSoft B2B.</documentation>
+    </element>
+    <element identifier="app-comp-oms" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Order Management System (OMS)</name>
+      <documentation xml:lang="en">Manages the full order lifecycle: order capture, allocation, release to warehouse, backorder management, and delivery tracking. May be a standalone OMS (e.g. Manhattan, Blue Yonder) or embedded in ERP.</documentation>
+    </element>
+    <element identifier="app-comp-wms" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Warehouse Management System (WMS)</name>
+      <documentation xml:lang="en">Manages 3PL warehouse operations: inbound receipts, storage, pick/pack, and despatch. Generates SSCC labels and triggers DESADV message creation on shipment confirmation.</documentation>
+    </element>
+    <element identifier="app-comp-einvoice" xsi:type="ApplicationComponent">
+      <name xml:lang="en">eInvoicing Platform (Peppol AP)</name>
+      <documentation xml:lang="en">Certified Peppol Access Point enabling compliant eInvoicing across the EU Peppol network. Converts SAP invoice output to Peppol BIS Billing 3.0 (UBL 2.1 / CII) and transmits via the 4-corner Peppol model. Also supports country-specific mandates (IT SDI, FR Chorus Pro, NL SBdH).</documentation>
+    </element>
+    <element identifier="app-comp-portal" xsi:type="ApplicationComponent">
+      <name xml:lang="en">B2B Customer Self-Service Portal</name>
+      <documentation xml:lang="en">Web-based portal allowing wholesale customers to place orders, track shipments, view invoices, download sales reports, and upload inventory/sales data. Provides an alternative to EDI for smaller customers without EDI capability.</documentation>
+    </element>
+    <element identifier="app-comp-bi" xsi:type="ApplicationComponent">
+      <name xml:lang="en">BI &amp; Reporting Application</name>
+      <documentation xml:lang="en">Business intelligence platform consolidating sales reporting (SLSRPT), inventory (INVRPT), and operational data for merchandising, planning, and management reporting. Examples: SAP Analytics Cloud, Power BI, Tableau.</documentation>
+    </element>
+    <element identifier="app-svc-order-proc" xsi:type="ApplicationService">
+      <name xml:lang="en">Order Processing Service</name>
+      <documentation xml:lang="en">Application service providing order creation, validation, inventory allocation, and order response generation. Exposed via EDI (ORDERS/ORDRSP) and REST API.</documentation>
+    </element>
+    <element identifier="app-svc-invoice-gen" xsi:type="ApplicationService">
+      <name xml:lang="en">Invoice Generation Service</name>
+      <documentation xml:lang="en">Generates structured invoices and credit notes from ERP billing documents. Outputs EDIFACT INVOIC, Peppol BIS Billing 3.0, or PDF depending on customer capability.</documentation>
+    </element>
+    <element identifier="app-svc-inventory" xsi:type="ApplicationService">
+      <name xml:lang="en">Inventory Management Service</name>
+      <documentation xml:lang="en">Manages real-time inventory availability across DCs and in-transit stock. Provides inventory data to OMS for allocation and publishes INVRPT to trading partners.</documentation>
+    </element>
+    <element identifier="app-svc-report-dist" xsi:type="ApplicationService">
+      <name xml:lang="en">Report Distribution Service</name>
+      <documentation xml:lang="en">Collects, validates, and distributes SLSRPT and INVRPT data from trading partners to BI and planning systems. Handles format normalisation across EDI, CSV, and API sources.</documentation>
+    </element>
+    <element identifier="app-svc-edi-trans" xsi:type="ApplicationService">
+      <name xml:lang="en">EDI Translation &amp; Routing Service</name>
+      <documentation xml:lang="en">Translates between internal application data formats and EDIFACT/GS1 XML messages. Routes inbound and outbound messages between trading partners and back-end systems. Provides acknowledgement (CONTRL) handling and error alerting.</documentation>
+    </element>
+    <element identifier="app-data-product" xsi:type="DataObject">
+      <name xml:lang="en">Product Master Data (GTIN / GS1)</name>
+      <documentation xml:lang="en">Canonical product data including GTIN-13/GTIN-14, product descriptions, size/colour variants, EAN barcodes, and GPC (Global Product Classification). Maintained in ERP and syndicated to EDI platform and portal.</documentation>
+    </element>
+    <element identifier="app-data-customer" xsi:type="DataObject">
+      <name xml:lang="en">Customer Master Data (GLN)</name>
+      <documentation xml:lang="en">Trading partner data including GLN (Global Location Number) for buyer, ship-to, and bill-to locations, EDI partner IDs, Peppol participant IDs, and payment terms per customer.</documentation>
+    </element>
+    <element identifier="app-data-order" xsi:type="DataObject">
+      <name xml:lang="en">Order &amp; Fulfilment Data</name>
+      <documentation xml:lang="en">Transactional data covering purchase orders, order responses, despatch advices, receiving advices, and shipment tracking events. Retained as the source of truth for order-to-delivery performance.</documentation>
+    </element>
+    <element identifier="app-data-financial" xsi:type="DataObject">
+      <name xml:lang="en">Financial &amp; Invoice Data</name>
+      <documentation xml:lang="en">Invoice records, credit notes, VAT amounts per country, payment status, and open items. Used for accounts receivable management and statutory reporting.</documentation>
+    </element>
+    <element identifier="tech-node-erp" xsi:type="Node">
+      <name xml:lang="en">ERP Application Server</name>
+      <documentation xml:lang="en">On-premise or cloud-hosted server (or RISE with SAP) running the ERP application. Central processing node for order-to-cash and financial accounting.</documentation>
+    </element>
+    <element identifier="tech-node-edi" xsi:type="Node">
+      <name xml:lang="en">EDI Gateway Server</name>
+      <documentation xml:lang="en">Dedicated server or cloud-hosted EDI platform instance managing trading partner communications over AS2, SFTP, and HTTPS. Provides message queuing, retry, and audit logging.</documentation>
+    </element>
+    <element identifier="tech-node-peppol" xsi:type="Node">
+      <name xml:lang="en">Peppol Access Point</name>
+      <documentation xml:lang="en">Certified Peppol Access Point node registered in the Peppol SML/SMP. Handles four-corner message exchange for eInvoicing across the EU Peppol network.</documentation>
+    </element>
+    <element identifier="tech-node-cloud" xsi:type="Node">
+      <name xml:lang="en">Cloud Infrastructure (IaaS / PaaS)</name>
+      <documentation xml:lang="en">Cloud hosting environment (AWS, Azure, or GCP) for portal, BI, and integration middleware components. Provides scalability, high availability, and EU data residency compliance.</documentation>
+    </element>
+    <element identifier="tech-node-db" xsi:type="Node">
+      <name xml:lang="en">Database Cluster</name>
+      <documentation xml:lang="en">High-availability database cluster storing transactional order, invoice, and reporting data. Provides persistence for ERP, OMS, and reporting applications.</documentation>
+    </element>
+    <element identifier="tech-sys-middleware" xsi:type="SystemSoftware">
+      <name xml:lang="en">Integration Middleware / ESB</name>
+      <documentation xml:lang="en">Enterprise Service Bus or iPaaS layer orchestrating message flows between ERP, EDI platform, WMS, and OMS. Handles protocol transformation, data mapping, and error handling. Examples: MuleSoft, Dell Boomi, Azure Integration Services.</documentation>
+    </element>
+    <element identifier="tech-sys-as2" xsi:type="SystemSoftware">
+      <name xml:lang="en">AS2 / SFTP Communication Software</name>
+      <documentation xml:lang="en">Software layer implementing AS2 (Applicability Statement 2) and SFTP protocols for secure B2B file exchange with trading partners. Provides encryption, digital signatures, and MDN acknowledgements.</documentation>
+    </element>
+    <element identifier="tech-sys-van" xsi:type="SystemSoftware">
+      <name xml:lang="en">Value-Added Network (VAN)</name>
+      <documentation xml:lang="en">Third-party EDI network providing store-and-forward messaging, trading partner connectivity, and message archiving for customers that do not support direct AS2 connectivity. Examples: GXS/OpenText, SPS Commerce, Crossroads.</documentation>
+    </element>
+    <element identifier="tech-svc-edi-transport" xsi:type="TechnologyService">
+      <name xml:lang="en">EDI Transport Service</name>
+      <documentation xml:lang="en">Low-level transport service for secure EDIFACT message exchange over AS2 and SFTP. Ensures delivery, acknowledgement (MDN/CONTRL), and audit trail.</documentation>
+    </element>
+    <element identifier="tech-svc-peppol-net" xsi:type="TechnologyService">
+      <name xml:lang="en">Peppol Network Service</name>
+      <documentation xml:lang="en">Peppol four-corner transport service enabling structured eInvoice delivery to any Peppol-connected receiver across EU. Uses PINT / BIS Billing 3.0 message format over AS4 protocol.</documentation>
+    </element>
+    <element identifier="tech-svc-api-gw" xsi:type="TechnologyService">
+      <name xml:lang="en">REST API Gateway Service</name>
+      <documentation xml:lang="en">API gateway exposing RESTful endpoints for order submission, order status, inventory query, and reporting data exchange. Supports OAuth 2.0 / OpenID Connect for customer authentication.</documentation>
+    </element>
+    <element identifier="tech-art-orders" xsi:type="Artifact">
+      <name xml:lang="en">EDIFACT ORDERS / ORDRSP Message</name>
+      <documentation xml:lang="en">EDIFACT D96A ORDERS (purchase order) and ORDRSP (order response) message files. Structured per GS1/EAN.COM guidelines for retail. Contains UNH/UNT envelope, BGM, DTM, NAD (GLN), LIN (GTIN), QTY, PRI segments.</documentation>
+    </element>
+    <element identifier="tech-art-desadv" xsi:type="Artifact">
+      <name xml:lang="en">EDIFACT DESADV Message</name>
+      <documentation xml:lang="en">EDIFACT D96A DESADV (despatch advice / ASN) message file. Contains shipment header, packing hierarchy (CPS), item data with GTIN and SSCC carton references, and carrier/tracking information.</documentation>
+    </element>
+    <element identifier="tech-art-invoic" xsi:type="Artifact">
+      <name xml:lang="en">EDIFACT INVOIC / Peppol BIS Invoice</name>
+      <documentation xml:lang="en">Invoice message transmitted as EDIFACT D96A INVOIC or Peppol BIS Billing 3.0 (UBL 2.1 / CII D16B). Contains invoice header, VAT summary, line items with GTIN, quantities, prices, and payment instructions.</documentation>
+    </element>
+    <element identifier="tech-art-slsrpt" xsi:type="Artifact">
+      <name xml:lang="en">EDIFACT SLSRPT Message</name>
+      <documentation xml:lang="en">EDIFACT D96A SLSRPT (sales report) message. Contains reporting period, location (GLN), and line-level sold quantities per GTIN. Submitted by the wholesale customer to the brand.</documentation>
+    </element>
+    <element identifier="tech-art-invrpt" xsi:type="Artifact">
+      <name xml:lang="en">EDIFACT INVRPT Message</name>
+      <documentation xml:lang="en">EDIFACT D96A INVRPT (inventory report) message. Contains stock-on-hand quantities per GTIN per location (GLN), inventory type (available, on-order, in-transit), and reporting date.</documentation>
+    </element>
+  </elements>
+  <relationships>
+    <relationship identifier="rel-01" xsi:type="Assignment" source="biz-actor-cs-eu" target="biz-role-cs-rep">
+      <documentation xml:lang="en">CS teams fulfil the Customer Service Representative role.</documentation>
+    </relationship>
+    <relationship identifier="rel-02" xsi:type="Assignment" source="biz-actor-cs-eu" target="biz-role-edi-coord">
+      <documentation xml:lang="en">EDI Coordinators are part of the EU CS organisation.</documentation>
+    </relationship>
+    <relationship identifier="rel-03" xsi:type="Assignment" source="biz-actor-brand" target="biz-role-order-mgr">
+      <documentation xml:lang="en">Brand operations staff fill the Order Manager role.</documentation>
+    </relationship>
+    <relationship identifier="rel-04" xsi:type="Assignment" source="biz-actor-finance" target="biz-role-finance-mgr">
+      <documentation xml:lang="en">Finance team fills Finance Manager / Credit Controller role.</documentation>
+    </relationship>
+    <relationship identifier="rel-05" xsi:type="Assignment" source="biz-actor-3pl" target="biz-role-logistics">
+      <documentation xml:lang="en">3PL staff fulfil the Logistics Coordinator role.</documentation>
+    </relationship>
+    <relationship identifier="rel-06" xsi:type="Assignment" source="biz-role-cs-rep" target="biz-proc-order">
+      <documentation xml:lang="en">CS Reps handle order intake and confirmation.</documentation>
+    </relationship>
+    <relationship identifier="rel-07" xsi:type="Assignment" source="biz-role-cs-rep" target="biz-proc-desadv">
+      <documentation xml:lang="en">CS Reps track and communicate despatch status.</documentation>
+    </relationship>
+    <relationship identifier="rel-08" xsi:type="Assignment" source="biz-role-edi-coord" target="biz-proc-slsrpt">
+      <documentation xml:lang="en">EDI Coordinators manage SLSRPT ingestion and validation.</documentation>
+    </relationship>
+    <relationship identifier="rel-09" xsi:type="Assignment" source="biz-role-edi-coord" target="biz-proc-invrpt">
+      <documentation xml:lang="en">EDI Coordinators manage INVRPT ingestion and validation.</documentation>
+    </relationship>
+    <relationship identifier="rel-10" xsi:type="Assignment" source="biz-role-finance-mgr" target="biz-proc-invoice">
+      <documentation xml:lang="en">Finance Manager owns the invoicing and eInvoicing process.</documentation>
+    </relationship>
+    <relationship identifier="rel-11" xsi:type="Assignment" source="biz-role-order-mgr" target="biz-proc-order">
+      <documentation xml:lang="en">Order Manager oversees order allocation and fulfilment.</documentation>
+    </relationship>
+    <relationship identifier="rel-12" xsi:type="Assignment" source="biz-role-logistics" target="biz-proc-desadv">
+      <documentation xml:lang="en">Logistics Coordinator manages 3PL despatch and ASN generation.</documentation>
+    </relationship>
+    <relationship identifier="rel-13" xsi:type="Triggering" source="biz-proc-order" target="biz-proc-desadv">
+      <name xml:lang="en">triggers</name>
+      <documentation xml:lang="en">A confirmed replenishment order triggers the despatch and shipment process.</documentation>
+    </relationship>
+    <relationship identifier="rel-14" xsi:type="Triggering" source="biz-proc-desadv" target="biz-proc-invoice">
+      <name xml:lang="en">triggers</name>
+      <documentation xml:lang="en">Goods despatch triggers invoice generation (invoice follows shipment).</documentation>
+    </relationship>
+    <relationship identifier="rel-15" xsi:type="Serving" source="biz-actor-customer" target="biz-proc-slsrpt">
+      <name xml:lang="en">submits SLSRPT</name>
+      <documentation xml:lang="en">Customer submits weekly/monthly sell-through data (SLSRPT) to the brand.</documentation>
+    </relationship>
+    <relationship identifier="rel-16" xsi:type="Serving" source="biz-actor-customer" target="biz-proc-invrpt">
+      <name xml:lang="en">submits INVRPT</name>
+      <documentation xml:lang="en">Customer submits inventory stock-on-hand data (INVRPT) to the brand.</documentation>
+    </relationship>
+    <relationship identifier="rel-17" xsi:type="Serving" source="biz-actor-customer" target="biz-proc-order">
+      <name xml:lang="en">places ORDERS</name>
+      <documentation xml:lang="en">Customer places replenishment purchase orders via EDI or portal.</documentation>
+    </relationship>
+    <relationship identifier="rel-18" xsi:type="Serving" source="biz-actor-3pl" target="biz-proc-desadv">
+      <name xml:lang="en">provides shipment data</name>
+      <documentation xml:lang="en">3PL generates DESADV on ship-confirm and provides carrier tracking.</documentation>
+    </relationship>
+    <relationship identifier="rel-19" xsi:type="Access" source="biz-proc-order" target="biz-obj-po">
+      <documentation xml:lang="en">Order process reads inbound Purchase Order.</documentation>
+    </relationship>
+    <relationship identifier="rel-20" xsi:type="Access" source="biz-proc-order" target="biz-obj-ordrsp">
+      <documentation xml:lang="en">Order process writes Order Response (ORDRSP).</documentation>
+    </relationship>
+    <relationship identifier="rel-21" xsi:type="Access" source="biz-proc-desadv" target="biz-obj-desadv">
+      <documentation xml:lang="en">Despatch process writes and reads Despatch Advice / ASN.</documentation>
+    </relationship>
+    <relationship identifier="rel-22" xsi:type="Access" source="biz-proc-invoice" target="biz-obj-invoice">
+      <documentation xml:lang="en">Invoice process writes commercial invoice.</documentation>
+    </relationship>
+    <relationship identifier="rel-23" xsi:type="Access" source="biz-proc-invoice" target="biz-obj-creditnote">
+      <documentation xml:lang="en">Invoice process writes credit notes for returns/disputes.</documentation>
+    </relationship>
+    <relationship identifier="rel-24" xsi:type="Access" source="biz-proc-slsrpt" target="biz-obj-slsrpt">
+      <documentation xml:lang="en">Sales reporting process reads inbound SLSRPT data.</documentation>
+    </relationship>
+    <relationship identifier="rel-25" xsi:type="Access" source="biz-proc-invrpt" target="biz-obj-invrpt">
+      <documentation xml:lang="en">Inventory reporting process reads inbound INVRPT data.</documentation>
+    </relationship>
+    <relationship identifier="rel-26" xsi:type="Realization" source="biz-proc-order" target="biz-svc-order">
+      <documentation xml:lang="en">Order process realises the Order Management Service.</documentation>
+    </relationship>
+    <relationship identifier="rel-27" xsi:type="Realization" source="biz-proc-desadv" target="biz-svc-logistics">
+      <documentation xml:lang="en">Despatch process realises the Logistics &amp; Fulfilment Service.</documentation>
+    </relationship>
+    <relationship identifier="rel-28" xsi:type="Realization" source="biz-proc-invoice" target="biz-svc-invoicing">
+      <documentation xml:lang="en">Invoice process realises the eInvoicing Service.</documentation>
+    </relationship>
+    <relationship identifier="rel-29" xsi:type="Realization" source="biz-proc-slsrpt" target="biz-svc-reporting">
+      <documentation xml:lang="en">Sales reporting process realises the Reporting Service.</documentation>
+    </relationship>
+    <relationship identifier="rel-30" xsi:type="Realization" source="biz-proc-invrpt" target="biz-svc-reporting">
+      <documentation xml:lang="en">Inventory reporting process realises the Reporting Service.</documentation>
+    </relationship>
+    <relationship identifier="rel-31" xsi:type="Serving" source="app-svc-order-proc" target="biz-svc-order">
+      <documentation xml:lang="en">OMS order processing service supports the business order management service.</documentation>
+    </relationship>
+    <relationship identifier="rel-32" xsi:type="Serving" source="app-svc-invoice-gen" target="biz-svc-invoicing">
+      <documentation xml:lang="en">Invoice generation service supports the eInvoicing service.</documentation>
+    </relationship>
+    <relationship identifier="rel-33" xsi:type="Serving" source="app-svc-report-dist" target="biz-svc-reporting">
+      <documentation xml:lang="en">Report distribution service supports sales &amp; inventory reporting service.</documentation>
+    </relationship>
+    <relationship identifier="rel-34" xsi:type="Serving" source="app-svc-edi-trans" target="biz-proc-order">
+      <documentation xml:lang="en">EDI translation service supports order management process (ORDERS/ORDRSP).</documentation>
+    </relationship>
+    <relationship identifier="rel-35" xsi:type="Serving" source="app-svc-edi-trans" target="biz-proc-desadv">
+      <documentation xml:lang="en">EDI translation service supports despatch advice process (DESADV/RECADV).</documentation>
+    </relationship>
+    <relationship identifier="rel-36" xsi:type="Serving" source="app-svc-edi-trans" target="biz-proc-slsrpt">
+      <documentation xml:lang="en">EDI translation service supports sales reporting process (SLSRPT).</documentation>
+    </relationship>
+    <relationship identifier="rel-37" xsi:type="Serving" source="app-svc-edi-trans" target="biz-proc-invrpt">
+      <documentation xml:lang="en">EDI translation service supports inventory reporting process (INVRPT).</documentation>
+    </relationship>
+    <relationship identifier="rel-38" xsi:type="Serving" source="app-comp-portal" target="biz-actor-customer">
+      <name xml:lang="en">self-service</name>
+      <documentation xml:lang="en">B2B portal provides self-service order, invoice, and reporting access to wholesale customers.</documentation>
+    </relationship>
+    <relationship identifier="rel-39" xsi:type="Realization" source="app-comp-erp" target="app-svc-order-proc">
+      <documentation xml:lang="en">ERP (SAP SD) realises order processing service.</documentation>
+    </relationship>
+    <relationship identifier="rel-40" xsi:type="Realization" source="app-comp-erp" target="app-svc-invoice-gen">
+      <documentation xml:lang="en">ERP (SAP FI) realises invoice generation service.</documentation>
+    </relationship>
+    <relationship identifier="rel-41" xsi:type="Realization" source="app-comp-erp" target="app-svc-inventory">
+      <documentation xml:lang="en">ERP (SAP MM/WM) realises inventory management service.</documentation>
+    </relationship>
+    <relationship identifier="rel-42" xsi:type="Realization" source="app-comp-edi" target="app-svc-edi-trans">
+      <documentation xml:lang="en">EDI/B2B gateway platform realises EDI translation &amp; routing service.</documentation>
+    </relationship>
+    <relationship identifier="rel-43" xsi:type="Realization" source="app-comp-bi" target="app-svc-report-dist">
+      <documentation xml:lang="en">BI platform realises report distribution service.</documentation>
+    </relationship>
+    <relationship identifier="rel-44" xsi:type="Realization" source="app-comp-einvoice" target="app-svc-invoice-gen">
+      <documentation xml:lang="en">Peppol AP realises invoice generation for structured eInvoicing.</documentation>
+    </relationship>
+    <relationship identifier="rel-45" xsi:type="Realization" source="app-comp-oms" target="app-svc-order-proc">
+      <documentation xml:lang="en">OMS realises order processing for allocation and lifecycle management.</documentation>
+    </relationship>
+    <relationship identifier="rel-46" xsi:type="Access" source="app-comp-erp" target="app-data-product">
+      <documentation xml:lang="en">ERP reads and maintains product master (GTIN).</documentation>
+    </relationship>
+    <relationship identifier="rel-47" xsi:type="Access" source="app-comp-erp" target="app-data-customer">
+      <documentation xml:lang="en">ERP reads and maintains customer master (GLN).</documentation>
+    </relationship>
+    <relationship identifier="rel-48" xsi:type="Access" source="app-comp-erp" target="app-data-order">
+      <documentation xml:lang="en">ERP reads and writes order &amp; fulfilment data.</documentation>
+    </relationship>
+    <relationship identifier="rel-49" xsi:type="Access" source="app-comp-erp" target="app-data-financial">
+      <documentation xml:lang="en">ERP reads and writes financial &amp; invoice data.</documentation>
+    </relationship>
+    <relationship identifier="rel-50" xsi:type="Access" source="app-comp-edi" target="app-data-product">
+      <documentation xml:lang="en">EDI platform reads product master for GTIN mapping.</documentation>
+    </relationship>
+    <relationship identifier="rel-51" xsi:type="Access" source="app-comp-edi" target="app-data-customer">
+      <documentation xml:lang="en">EDI platform reads customer master for GLN/partner ID routing.</documentation>
+    </relationship>
+    <relationship identifier="rel-52" xsi:type="Access" source="app-comp-portal" target="app-data-order">
+      <documentation xml:lang="en">Portal reads order &amp; fulfilment data for customer self-service.</documentation>
+    </relationship>
+    <relationship identifier="rel-53" xsi:type="Access" source="app-comp-bi" target="app-data-order">
+      <documentation xml:lang="en">BI platform reads order data for sell-through and fulfilment analytics.</documentation>
+    </relationship>
+    <relationship identifier="rel-54" xsi:type="Serving" source="tech-svc-edi-transport" target="app-svc-edi-trans">
+      <documentation xml:lang="en">EDI transport (AS2/SFTP) enables EDI translation &amp; routing service.</documentation>
+    </relationship>
+    <relationship identifier="rel-55" xsi:type="Serving" source="tech-svc-peppol-net" target="app-svc-invoice-gen">
+      <documentation xml:lang="en">Peppol network service enables structured eInvoice delivery.</documentation>
+    </relationship>
+    <relationship identifier="rel-56" xsi:type="Serving" source="tech-svc-api-gw" target="app-svc-order-proc">
+      <documentation xml:lang="en">REST API gateway enables API-based order submission and status.</documentation>
+    </relationship>
+    <relationship identifier="rel-57" xsi:type="Realization" source="tech-node-erp" target="app-comp-erp">
+      <documentation xml:lang="en">ERP server hosts the ERP application.</documentation>
+    </relationship>
+    <relationship identifier="rel-58" xsi:type="Realization" source="tech-node-edi" target="app-comp-edi">
+      <documentation xml:lang="en">EDI gateway server hosts the B2B gateway platform.</documentation>
+    </relationship>
+    <relationship identifier="rel-59" xsi:type="Realization" source="tech-node-peppol" target="app-comp-einvoice">
+      <documentation xml:lang="en">Peppol AP node hosts the eInvoicing platform.</documentation>
+    </relationship>
+    <relationship identifier="rel-60" xsi:type="Realization" source="tech-node-cloud" target="app-comp-portal">
+      <documentation xml:lang="en">Cloud IaaS hosts the B2B customer portal.</documentation>
+    </relationship>
+    <relationship identifier="rel-61" xsi:type="Realization" source="tech-node-cloud" target="app-comp-bi">
+      <documentation xml:lang="en">Cloud IaaS/PaaS hosts the BI &amp; reporting application.</documentation>
+    </relationship>
+    <relationship identifier="rel-62" xsi:type="Realization" source="tech-node-cloud" target="app-comp-oms">
+      <documentation xml:lang="en">Cloud IaaS hosts the Order Management System.</documentation>
+    </relationship>
+    <relationship identifier="rel-63" xsi:type="Serving" source="tech-sys-middleware" target="app-comp-edi">
+      <documentation xml:lang="en">ESB/middleware orchestrates message flows into and out of the EDI platform.</documentation>
+    </relationship>
+    <relationship identifier="rel-64" xsi:type="Serving" source="tech-sys-middleware" target="app-comp-erp">
+      <documentation xml:lang="en">ESB/middleware connects ERP to EDI and OMS integration flows.</documentation>
+    </relationship>
+    <relationship identifier="rel-65" xsi:type="Realization" source="tech-sys-as2" target="tech-svc-edi-transport">
+      <documentation xml:lang="en">AS2/SFTP software realises the EDI transport service.</documentation>
+    </relationship>
+    <relationship identifier="rel-66" xsi:type="Realization" source="tech-sys-van" target="tech-svc-edi-transport">
+      <documentation xml:lang="en">VAN realises the EDI transport service for partners without direct AS2.</documentation>
+    </relationship>
+    <relationship identifier="rel-67" xsi:type="Serving" source="tech-node-db" target="app-data-order">
+      <documentation xml:lang="en">Database cluster persists order &amp; fulfilment data.</documentation>
+    </relationship>
+    <relationship identifier="rel-68" xsi:type="Serving" source="tech-node-db" target="app-data-financial">
+      <documentation xml:lang="en">Database cluster persists financial &amp; invoice data.</documentation>
+    </relationship>
+    <relationship identifier="rel-69" xsi:type="Association" source="tech-art-orders" target="biz-obj-po">
+      <name xml:lang="en">carries</name>
+      <documentation xml:lang="en">EDIFACT ORDERS message is the technical carrier of the Purchase Order document.</documentation>
+    </relationship>
+    <relationship identifier="rel-70" xsi:type="Association" source="tech-art-orders" target="biz-obj-ordrsp">
+      <name xml:lang="en">carries</name>
+      <documentation xml:lang="en">EDIFACT ORDRSP message is the technical carrier of the Order Response.</documentation>
+    </relationship>
+    <relationship identifier="rel-71" xsi:type="Association" source="tech-art-desadv" target="biz-obj-desadv">
+      <name xml:lang="en">carries</name>
+      <documentation xml:lang="en">EDIFACT DESADV message is the technical carrier of the Despatch Advice.</documentation>
+    </relationship>
+    <relationship identifier="rel-72" xsi:type="Association" source="tech-art-invoic" target="biz-obj-invoice">
+      <name xml:lang="en">carries</name>
+      <documentation xml:lang="en">EDIFACT INVOIC / Peppol BIS is the technical carrier of the Invoice.</documentation>
+    </relationship>
+    <relationship identifier="rel-73" xsi:type="Association" source="tech-art-slsrpt" target="biz-obj-slsrpt">
+      <name xml:lang="en">carries</name>
+      <documentation xml:lang="en">EDIFACT SLSRPT message is the technical carrier of the Sales Report.</documentation>
+    </relationship>
+    <relationship identifier="rel-74" xsi:type="Association" source="tech-art-invrpt" target="biz-obj-invrpt">
+      <name xml:lang="en">carries</name>
+      <documentation xml:lang="en">EDIFACT INVRPT message is the technical carrier of the Inventory Report.</documentation>
+    </relationship>
+  </relationships>
+  <views>
+    <diagrams>
+      <view identifier="id-mnhxqioo1mern" xsi:type="Diagram">
+        <name xml:lang="en">Default View</name>
+        <node identifier="id-mnhxqioo2azle" elementRef="biz-actor-brand" xsi:type="Element" x="30" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioo34wzp" elementRef="biz-actor-cs-eu" xsi:type="Element" x="170" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioo43syb" elementRef="biz-actor-customer" xsi:type="Element" x="310" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioo5myg1" elementRef="biz-actor-3pl" xsi:type="Element" x="30" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioo69uh4" elementRef="biz-actor-finance" xsi:type="Element" x="170" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioo7d53v" elementRef="biz-role-cs-rep" xsi:type="Element" x="310" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioo8eixb" elementRef="biz-role-edi-coord" xsi:type="Element" x="30" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqioo9522w" elementRef="biz-role-order-mgr" xsi:type="Element" x="170" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqiooawd0y" elementRef="biz-role-finance-mgr" xsi:type="Element" x="310" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqiooby9bc" elementRef="biz-role-logistics" xsi:type="Element" x="30" y="279" w="120" h="55"/>
+        <node identifier="id-mnhxqiooc87bx" elementRef="biz-proc-order" xsi:type="Element" x="480" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioodhc3g" elementRef="biz-proc-desadv" xsi:type="Element" x="620" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqiooer1sk" elementRef="biz-proc-invoice" xsi:type="Element" x="760" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioofsrgg" elementRef="biz-proc-slsrpt" xsi:type="Element" x="480" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioog5vuo" elementRef="biz-proc-invrpt" xsi:type="Element" x="620" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioohlsyn" elementRef="biz-svc-order" xsi:type="Element" x="760" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqiooiuoc5" elementRef="biz-svc-logistics" xsi:type="Element" x="480" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqioojcpon" elementRef="biz-svc-invoicing" xsi:type="Element" x="620" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqiookaf4r" elementRef="biz-svc-reporting" xsi:type="Element" x="760" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqioolp1ty" elementRef="biz-obj-po" xsi:type="Element" x="930" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioomhx44" elementRef="biz-obj-ordrsp" xsi:type="Element" x="1070" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqioonu87d" elementRef="biz-obj-desadv" xsi:type="Element" x="1210" y="60" w="120" h="55"/>
+        <node identifier="id-mnhxqiooozg1u" elementRef="biz-obj-invoice" xsi:type="Element" x="930" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioophqpr" elementRef="biz-obj-creditnote" xsi:type="Element" x="1070" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqiooq98ih" elementRef="biz-obj-slsrpt" xsi:type="Element" x="1210" y="133" w="120" h="55"/>
+        <node identifier="id-mnhxqioort1hp" elementRef="biz-obj-invrpt" xsi:type="Element" x="930" y="206" w="120" h="55"/>
+        <node identifier="id-mnhxqioosg169" elementRef="app-comp-erp" xsi:type="Element" x="30" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqiootgdxd" elementRef="app-comp-edi" xsi:type="Element" x="170" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqiooudbmk" elementRef="app-comp-oms" xsi:type="Element" x="310" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioovik1h" elementRef="app-comp-wms" xsi:type="Element" x="30" y="525" w="120" h="55"/>
+        <node identifier="id-mnhxqiooww2ig" elementRef="app-comp-einvoice" xsi:type="Element" x="170" y="525" w="120" h="55"/>
+        <node identifier="id-mnhxqioox2zm4" elementRef="app-comp-portal" xsi:type="Element" x="310" y="525" w="120" h="55"/>
+        <node identifier="id-mnhxqiooyk91l" elementRef="app-comp-bi" xsi:type="Element" x="30" y="598" w="120" h="55"/>
+        <node identifier="id-mnhxqiooz7bwt" elementRef="app-svc-order-proc" xsi:type="Element" x="480" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioo103di4" elementRef="app-svc-invoice-gen" xsi:type="Element" x="620" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioo11b1m5" elementRef="app-svc-inventory" xsi:type="Element" x="760" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioo121l78" elementRef="app-svc-report-dist" xsi:type="Element" x="480" y="525" w="120" h="55"/>
+        <node identifier="id-mnhxqioo137arq" elementRef="app-svc-edi-trans" xsi:type="Element" x="620" y="525" w="120" h="55"/>
+        <node identifier="id-mnhxqioo14phie" elementRef="app-data-product" xsi:type="Element" x="930" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioo15e7v6" elementRef="app-data-customer" xsi:type="Element" x="1070" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioo16ncqg" elementRef="app-data-order" xsi:type="Element" x="1210" y="452" w="120" h="55"/>
+        <node identifier="id-mnhxqioo17a6qn" elementRef="app-data-financial" xsi:type="Element" x="930" y="525" w="120" h="55"/>
+        <node identifier="id-mnhxqioo18ldtk" elementRef="tech-node-erp" xsi:type="Element" x="30" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqioo19itoi" elementRef="tech-node-edi" xsi:type="Element" x="170" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1a5iaf" elementRef="tech-node-peppol" xsi:type="Element" x="310" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1b1lsz" elementRef="tech-node-cloud" xsi:type="Element" x="30" y="844" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1cr71m" elementRef="tech-node-db" xsi:type="Element" x="170" y="844" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1d3m0f" elementRef="tech-sys-middleware" xsi:type="Element" x="310" y="844" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1eksoh" elementRef="tech-sys-as2" xsi:type="Element" x="30" y="917" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1fq8m8" elementRef="tech-sys-van" xsi:type="Element" x="170" y="917" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1gzlsm" elementRef="tech-svc-edi-transport" xsi:type="Element" x="480" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1hj65h" elementRef="tech-svc-peppol-net" xsi:type="Element" x="620" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1i5j6y" elementRef="tech-svc-api-gw" xsi:type="Element" x="760" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqioo1jjv9o" elementRef="tech-art-orders" xsi:type="Element" x="930" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqiop1kx08r" elementRef="tech-art-desadv" xsi:type="Element" x="1070" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqiop1l7pkd" elementRef="tech-art-invoic" xsi:type="Element" x="1210" y="771" w="120" h="55"/>
+        <node identifier="id-mnhxqiop1m462w" elementRef="tech-art-slsrpt" xsi:type="Element" x="930" y="844" w="120" h="55"/>
+        <node identifier="id-mnhxqiop1n5j9x" elementRef="tech-art-invrpt" xsi:type="Element" x="1070" y="844" w="120" h="55"/>
+        <connection identifier="id-mnhxqiop1o6o4q" relationshipRef="rel-01" xsi:type="Relationship" source="id-mnhxqioo34wzp" target="id-mnhxqioo7d53v"/>
+        <connection identifier="id-mnhxqiop1pt8wy" relationshipRef="rel-02" xsi:type="Relationship" source="id-mnhxqioo34wzp" target="id-mnhxqioo8eixb"/>
+        <connection identifier="id-mnhxqiop1qyc4r" relationshipRef="rel-03" xsi:type="Relationship" source="id-mnhxqioo2azle" target="id-mnhxqioo9522w"/>
+        <connection identifier="id-mnhxqiop1rmdsi" relationshipRef="rel-04" xsi:type="Relationship" source="id-mnhxqioo69uh4" target="id-mnhxqiooawd0y"/>
+        <connection identifier="id-mnhxqiop1sib12" relationshipRef="rel-05" xsi:type="Relationship" source="id-mnhxqioo5myg1" target="id-mnhxqiooby9bc"/>
+        <connection identifier="id-mnhxqiop1ttibq" relationshipRef="rel-06" xsi:type="Relationship" source="id-mnhxqioo7d53v" target="id-mnhxqiooc87bx"/>
+        <connection identifier="id-mnhxqiop1uv573" relationshipRef="rel-07" xsi:type="Relationship" source="id-mnhxqioo7d53v" target="id-mnhxqioodhc3g"/>
+        <connection identifier="id-mnhxqiop1v6u3a" relationshipRef="rel-08" xsi:type="Relationship" source="id-mnhxqioo8eixb" target="id-mnhxqioofsrgg"/>
+        <connection identifier="id-mnhxqiop1w6w60" relationshipRef="rel-09" xsi:type="Relationship" source="id-mnhxqioo8eixb" target="id-mnhxqioog5vuo"/>
+        <connection identifier="id-mnhxqiop1xmpk7" relationshipRef="rel-10" xsi:type="Relationship" source="id-mnhxqiooawd0y" target="id-mnhxqiooer1sk"/>
+        <connection identifier="id-mnhxqiop1yvrgu" relationshipRef="rel-11" xsi:type="Relationship" source="id-mnhxqioo9522w" target="id-mnhxqiooc87bx"/>
+        <connection identifier="id-mnhxqiop1zfsuq" relationshipRef="rel-12" xsi:type="Relationship" source="id-mnhxqiooby9bc" target="id-mnhxqioodhc3g"/>
+        <connection identifier="id-mnhxqiop20xqms" relationshipRef="rel-13" xsi:type="Relationship" source="id-mnhxqiooc87bx" target="id-mnhxqioodhc3g"/>
+        <connection identifier="id-mnhxqiop21t63r" relationshipRef="rel-14" xsi:type="Relationship" source="id-mnhxqioodhc3g" target="id-mnhxqiooer1sk"/>
+        <connection identifier="id-mnhxqiop22xzr6" relationshipRef="rel-15" xsi:type="Relationship" source="id-mnhxqioo43syb" target="id-mnhxqioofsrgg"/>
+        <connection identifier="id-mnhxqiop23dpdv" relationshipRef="rel-16" xsi:type="Relationship" source="id-mnhxqioo43syb" target="id-mnhxqioog5vuo"/>
+        <connection identifier="id-mnhxqiop24da26" relationshipRef="rel-17" xsi:type="Relationship" source="id-mnhxqioo43syb" target="id-mnhxqiooc87bx"/>
+        <connection identifier="id-mnhxqiop25jaqq" relationshipRef="rel-18" xsi:type="Relationship" source="id-mnhxqioo5myg1" target="id-mnhxqioodhc3g"/>
+        <connection identifier="id-mnhxqiop26vn5b" relationshipRef="rel-19" xsi:type="Relationship" source="id-mnhxqiooc87bx" target="id-mnhxqioolp1ty"/>
+        <connection identifier="id-mnhxqiop27hbqx" relationshipRef="rel-20" xsi:type="Relationship" source="id-mnhxqiooc87bx" target="id-mnhxqioomhx44"/>
+        <connection identifier="id-mnhxqiop28sz6p" relationshipRef="rel-21" xsi:type="Relationship" source="id-mnhxqioodhc3g" target="id-mnhxqioonu87d"/>
+        <connection identifier="id-mnhxqiop29ufa4" relationshipRef="rel-22" xsi:type="Relationship" source="id-mnhxqiooer1sk" target="id-mnhxqiooozg1u"/>
+        <connection identifier="id-mnhxqiop2amgot" relationshipRef="rel-23" xsi:type="Relationship" source="id-mnhxqiooer1sk" target="id-mnhxqioophqpr"/>
+        <connection identifier="id-mnhxqiop2b2351" relationshipRef="rel-24" xsi:type="Relationship" source="id-mnhxqioofsrgg" target="id-mnhxqiooq98ih"/>
+        <connection identifier="id-mnhxqiop2cfuw2" relationshipRef="rel-25" xsi:type="Relationship" source="id-mnhxqioog5vuo" target="id-mnhxqioort1hp"/>
+        <connection identifier="id-mnhxqiop2dnhys" relationshipRef="rel-26" xsi:type="Relationship" source="id-mnhxqiooc87bx" target="id-mnhxqioohlsyn"/>
+        <connection identifier="id-mnhxqiop2e0oym" relationshipRef="rel-27" xsi:type="Relationship" source="id-mnhxqioodhc3g" target="id-mnhxqiooiuoc5"/>
+        <connection identifier="id-mnhxqiop2ffnk9" relationshipRef="rel-28" xsi:type="Relationship" source="id-mnhxqiooer1sk" target="id-mnhxqioojcpon"/>
+        <connection identifier="id-mnhxqiop2g3ozc" relationshipRef="rel-29" xsi:type="Relationship" source="id-mnhxqioofsrgg" target="id-mnhxqiookaf4r"/>
+        <connection identifier="id-mnhxqiop2hhwob" relationshipRef="rel-30" xsi:type="Relationship" source="id-mnhxqioog5vuo" target="id-mnhxqiookaf4r"/>
+        <connection identifier="id-mnhxqiop2i62fk" relationshipRef="rel-31" xsi:type="Relationship" source="id-mnhxqiooz7bwt" target="id-mnhxqioohlsyn"/>
+        <connection identifier="id-mnhxqiop2jeylm" relationshipRef="rel-32" xsi:type="Relationship" source="id-mnhxqioo103di4" target="id-mnhxqioojcpon"/>
+        <connection identifier="id-mnhxqiop2kgxfs" relationshipRef="rel-33" xsi:type="Relationship" source="id-mnhxqioo121l78" target="id-mnhxqiookaf4r"/>
+        <connection identifier="id-mnhxqiop2lgpfs" relationshipRef="rel-34" xsi:type="Relationship" source="id-mnhxqioo137arq" target="id-mnhxqiooc87bx"/>
+        <connection identifier="id-mnhxqiop2mp00p" relationshipRef="rel-35" xsi:type="Relationship" source="id-mnhxqioo137arq" target="id-mnhxqioodhc3g"/>
+        <connection identifier="id-mnhxqiop2n2o2n" relationshipRef="rel-36" xsi:type="Relationship" source="id-mnhxqioo137arq" target="id-mnhxqioofsrgg"/>
+        <connection identifier="id-mnhxqiop2of2tt" relationshipRef="rel-37" xsi:type="Relationship" source="id-mnhxqioo137arq" target="id-mnhxqioog5vuo"/>
+        <connection identifier="id-mnhxqiop2pcyle" relationshipRef="rel-38" xsi:type="Relationship" source="id-mnhxqioox2zm4" target="id-mnhxqioo43syb"/>
+        <connection identifier="id-mnhxqiop2qpxtr" relationshipRef="rel-39" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqiooz7bwt"/>
+        <connection identifier="id-mnhxqiop2r4t6l" relationshipRef="rel-40" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqioo103di4"/>
+        <connection identifier="id-mnhxqiop2sjfvr" relationshipRef="rel-41" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqioo11b1m5"/>
+        <connection identifier="id-mnhxqiop2t1paq" relationshipRef="rel-42" xsi:type="Relationship" source="id-mnhxqiootgdxd" target="id-mnhxqioo137arq"/>
+        <connection identifier="id-mnhxqiop2u4tl9" relationshipRef="rel-43" xsi:type="Relationship" source="id-mnhxqiooyk91l" target="id-mnhxqioo121l78"/>
+        <connection identifier="id-mnhxqiop2vqff6" relationshipRef="rel-44" xsi:type="Relationship" source="id-mnhxqiooww2ig" target="id-mnhxqioo103di4"/>
+        <connection identifier="id-mnhxqiop2wjk5x" relationshipRef="rel-45" xsi:type="Relationship" source="id-mnhxqiooudbmk" target="id-mnhxqiooz7bwt"/>
+        <connection identifier="id-mnhxqiop2xb86g" relationshipRef="rel-46" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqioo14phie"/>
+        <connection identifier="id-mnhxqiop2yfs3y" relationshipRef="rel-47" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqioo15e7v6"/>
+        <connection identifier="id-mnhxqiop2zrpht" relationshipRef="rel-48" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqioo16ncqg"/>
+        <connection identifier="id-mnhxqiop30s1bl" relationshipRef="rel-49" xsi:type="Relationship" source="id-mnhxqioosg169" target="id-mnhxqioo17a6qn"/>
+        <connection identifier="id-mnhxqiop31y2vj" relationshipRef="rel-50" xsi:type="Relationship" source="id-mnhxqiootgdxd" target="id-mnhxqioo14phie"/>
+        <connection identifier="id-mnhxqiop32qn6c" relationshipRef="rel-51" xsi:type="Relationship" source="id-mnhxqiootgdxd" target="id-mnhxqioo15e7v6"/>
+        <connection identifier="id-mnhxqiop33uuzd" relationshipRef="rel-52" xsi:type="Relationship" source="id-mnhxqioox2zm4" target="id-mnhxqioo16ncqg"/>
+        <connection identifier="id-mnhxqiop34cohw" relationshipRef="rel-53" xsi:type="Relationship" source="id-mnhxqiooyk91l" target="id-mnhxqioo16ncqg"/>
+        <connection identifier="id-mnhxqiop35irjg" relationshipRef="rel-54" xsi:type="Relationship" source="id-mnhxqioo1gzlsm" target="id-mnhxqioo137arq"/>
+        <connection identifier="id-mnhxqiop36hguu" relationshipRef="rel-55" xsi:type="Relationship" source="id-mnhxqioo1hj65h" target="id-mnhxqioo103di4"/>
+        <connection identifier="id-mnhxqiop37yh1o" relationshipRef="rel-56" xsi:type="Relationship" source="id-mnhxqioo1i5j6y" target="id-mnhxqiooz7bwt"/>
+        <connection identifier="id-mnhxqiop380875" relationshipRef="rel-57" xsi:type="Relationship" source="id-mnhxqioo18ldtk" target="id-mnhxqioosg169"/>
+        <connection identifier="id-mnhxqiop391nma" relationshipRef="rel-58" xsi:type="Relationship" source="id-mnhxqioo19itoi" target="id-mnhxqiootgdxd"/>
+        <connection identifier="id-mnhxqiop3ans2n" relationshipRef="rel-59" xsi:type="Relationship" source="id-mnhxqioo1a5iaf" target="id-mnhxqiooww2ig"/>
+        <connection identifier="id-mnhxqiop3b0e32" relationshipRef="rel-60" xsi:type="Relationship" source="id-mnhxqioo1b1lsz" target="id-mnhxqioox2zm4"/>
+        <connection identifier="id-mnhxqiop3cvfzq" relationshipRef="rel-61" xsi:type="Relationship" source="id-mnhxqioo1b1lsz" target="id-mnhxqiooyk91l"/>
+        <connection identifier="id-mnhxqiop3d07v3" relationshipRef="rel-62" xsi:type="Relationship" source="id-mnhxqioo1b1lsz" target="id-mnhxqiooudbmk"/>
+        <connection identifier="id-mnhxqiop3e1mh2" relationshipRef="rel-63" xsi:type="Relationship" source="id-mnhxqioo1d3m0f" target="id-mnhxqiootgdxd"/>
+        <connection identifier="id-mnhxqiop3fee62" relationshipRef="rel-64" xsi:type="Relationship" source="id-mnhxqioo1d3m0f" target="id-mnhxqioosg169"/>
+        <connection identifier="id-mnhxqiop3grapx" relationshipRef="rel-65" xsi:type="Relationship" source="id-mnhxqioo1eksoh" target="id-mnhxqioo1gzlsm"/>
+        <connection identifier="id-mnhxqiop3h1zab" relationshipRef="rel-66" xsi:type="Relationship" source="id-mnhxqioo1fq8m8" target="id-mnhxqioo1gzlsm"/>
+        <connection identifier="id-mnhxqiop3iyqmt" relationshipRef="rel-67" xsi:type="Relationship" source="id-mnhxqioo1cr71m" target="id-mnhxqioo16ncqg"/>
+        <connection identifier="id-mnhxqiop3jqvfh" relationshipRef="rel-68" xsi:type="Relationship" source="id-mnhxqioo1cr71m" target="id-mnhxqioo17a6qn"/>
+        <connection identifier="id-mnhxqiop3khxbe" relationshipRef="rel-69" xsi:type="Relationship" source="id-mnhxqioo1jjv9o" target="id-mnhxqioolp1ty"/>
+        <connection identifier="id-mnhxqiop3lxdx3" relationshipRef="rel-70" xsi:type="Relationship" source="id-mnhxqioo1jjv9o" target="id-mnhxqioomhx44"/>
+        <connection identifier="id-mnhxqiop3m36lk" relationshipRef="rel-71" xsi:type="Relationship" source="id-mnhxqiop1kx08r" target="id-mnhxqioonu87d"/>
+        <connection identifier="id-mnhxqiop3n97es" relationshipRef="rel-72" xsi:type="Relationship" source="id-mnhxqiop1l7pkd" target="id-mnhxqiooozg1u"/>
+        <connection identifier="id-mnhxqiop3oyoch" relationshipRef="rel-73" xsi:type="Relationship" source="id-mnhxqiop1m462w" target="id-mnhxqiooq98ih"/>
+        <connection identifier="id-mnhxqiop3pyfc8" relationshipRef="rel-74" xsi:type="Relationship" source="id-mnhxqiop1n5j9x" target="id-mnhxqioort1hp"/>
+      </view>
+    </diagrams>
+  </views>
+</model>
