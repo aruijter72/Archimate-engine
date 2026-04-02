@@ -1477,7 +1477,7 @@ function renderRelationships() {
   // Quick reference card grid
   html += `<details style="margin-bottom:1.25rem">
     <summary style="cursor:pointer;font-size:.75rem;color:var(--muted);padding:.3rem 0;user-select:none">
-      ▶ ArchiMate Relationship Reference (click to expand)
+      ArchiMate Relationship Reference (click to expand)
     </summary>
     <div class="ref-grid" style="margin-top:.75rem">`;
   for (const rt of REL_TYPES) {
@@ -1562,6 +1562,7 @@ function renderRelationships() {
           <td>
             <select class="rel-select" onchange="setRel('${rel.id}','type',this.value)">${rtOpts}</select>
             <div class="rel-desc">${rt.desc}</div>
+            ${relWarn ? `<div class="rel-warning">⚠ ${relWarn}</div>` : ''}
           </td>
           <td><select class="rel-select" onchange="setRel('${rel.id}','targetId',this.value)">${tOpts}</select></td>
           <td>
