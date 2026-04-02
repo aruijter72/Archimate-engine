@@ -2312,7 +2312,9 @@ function generateAMEFF() {
 
 function exportAMEFF() {
   const broken = model.relationships.filter(r=>!r.sourceId||!r.targetId);
-  if (broken.length && !confirm(`⚠ ${broken.length} relationship(s) have no source/target and will be skipped.\nExport anyway?`)) return;
+  let msg = '';
+  if (broken.length) msg += t('exp-broken')(broken.length);
+  if (msg && !confirm(msg + t('exp-anyway'))) return;
   const xml  = generateAMEFF();
   const blob = new Blob([xml],{type:'application/xml;charset=UTF-8'});
   const url  = URL.createObjectURL(blob);
@@ -2325,9 +2327,9 @@ function exportArchimate() {
   const unnamed = model.elements.filter(e=>!e.name.trim());
   const broken  = model.relationships.filter(r=>!r.sourceId||!r.targetId);
   let warn = '';
-  if (unnamed.length) warn += `⚠ ${unnamed.length} element(s) have no name.\n`;
-  if (broken.length)  warn += `⚠ ${broken.length} relationship(s) have no source/target and will be skipped.\n`;
-  if (warn && !confirm(warn + '\nExport anyway?')) return;
+  if (unnamed.length) warn += t('exp-unnamed')(unnamed.length);
+  if (broken.length)  warn += t('exp-broken')(broken.length);
+  if (warn && !confirm(warn + t('exp-anyway'))) return;
 
   const xml  = generateArchimateXML();
   const blob = new Blob([xml], {type:'application/xml;charset=UTF-8'});
