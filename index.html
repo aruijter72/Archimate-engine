@@ -1558,12 +1558,12 @@ function renderWizStep() {
 
   if (_wiz.step===1) {
     body += `
-      <div class="wiz-q">What is this model about?</div>
-      <div class="wiz-hint">Give your model a clear name — this becomes the title in the ArchiMate export. A brief description is optional but helpful.</div>
-      <input id="wizName" class="wiz-input" placeholder="e.g. ESB Integration Platform, Order-to-Cash, IT Help Desk…" value="${esc(_wiz.name)}">
+      <div class="wiz-q">${t('wiz-s1-t')}</div>
+      <div class="wiz-hint"></div>
+      <input id="wizName" class="wiz-input" placeholder="${t('wiz-s1-ph')}" value="${esc(_wiz.name)}">
       ${_wiz.err?`<div class="wiz-err">${_wiz.err}</div>`:''}
       <div class="wiz-actions">
-        <button class="btn btn-primary" onclick="wizNext()">Next →</button>
+        <button class="btn btn-primary" onclick="wizNext()">${t('wiz-next')}</button>
       </div>`;
 
   } else if (_wiz.step===2) {
