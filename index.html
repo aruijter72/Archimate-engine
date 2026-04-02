@@ -869,7 +869,7 @@
   <img src="Logo Huisstijl geel.png" alt="Arnold Ruijter IT" class="ar-logo ar-logo-footer">
   &nbsp;<span class="logo-name">Arnold</span> <strong class="logo-gold">Ruijter IT</strong>
   &nbsp;·&nbsp;
-  <a href="https://www.archimatetool.com" target="_blank" rel="noopener">Archi 5.x</a> compatible export
+  <a href="https://www.archimatetool.com" target="_blank" rel="noopener">Archi 5.x</a> <span id="footer-compat">compatible export</span>
 </footer>
 
 <script>
@@ -1409,27 +1409,27 @@ function validateRelType(srcType, relType, tgtType) {
   switch (relType) {
     case 'AccessRelationship':
       if (sa !== 'behaviour')
-        return 'Access: source must be a Behaviour element (Process, Function, Service…).';
+        return t('vw-acc-src');
       if (ta !== 'passive')
-        return 'Access: target must be a Passive Structure element (Data Object, Artifact…).';
+        return t('vw-acc-tgt');
       break;
     case 'AssignmentRelationship':
       if (!((sa==='active'&&ta==='behaviour')||(sa==='behaviour'&&ta==='active')||(sa==='active'&&ta==='active')))
-        return 'Assignment: requires Active Structure ↔ Behaviour (or Active ↔ Active for roles).';
+        return t('vw-assign');
       break;
     case 'TriggeringRelationship':
       if (sa!=='behaviour'||ta!=='behaviour')
-        return 'Triggering: both source and target must be Behaviour elements.';
+        return t('vw-trig');
       break;
     case 'FlowRelationship':
       if (sa!=='behaviour'||ta!=='behaviour')
-        return 'Flow: both source and target must be Behaviour elements.';
+        return t('vw-flow');
       break;
     case 'ServingRelationship':
       if (ta==='passive')
-        return 'Serving: cannot target a Passive Structure element — use Association (directed) or Access.';
+        return t('vw-srv-tgt');
       if (sa==='passive')
-        return 'Serving: cannot originate from a Passive Structure element.';
+        return t('vw-srv-src');
       break;
   }
   return null;
