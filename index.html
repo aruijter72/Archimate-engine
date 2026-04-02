@@ -1568,35 +1568,35 @@ function renderWizStep() {
 
   } else if (_wiz.step===2) {
     body += `
-      <div class="wiz-q">Who are the key actors or parties?</div>
-      <div class="wiz-hint">List the people, teams, departments, or external organisations involved. One per line, or comma-separated. These become <strong>Business Actors</strong>.</div>
-      <textarea id="wizActors" class="wiz-textarea" placeholder="e.g.&#10;Customer Service Team&#10;Wholesale Customer&#10;Finance Department">${esc(_wiz.actors)}</textarea>
+      <div class="wiz-q">${t('wiz-s2-t')}</div>
+      <div class="wiz-hint"></div>
+      <textarea id="wizActors" class="wiz-textarea" placeholder="${t('wiz-s2-ph')}">${esc(_wiz.actors)}</textarea>
       <div class="wiz-actions">
-        <button class="wiz-back" onclick="wizBack()">← Back</button>
-        <button class="btn btn-secondary" onclick="wizSkip()">Skip</button>
-        <button class="btn btn-primary" onclick="wizNext()">Next →</button>
+        <button class="wiz-back" onclick="wizBack()">${t('wiz-back')}</button>
+        <button class="btn btn-secondary" onclick="wizSkip()">${t('wiz-skip')}</button>
+        <button class="btn btn-primary" onclick="wizNext()">${t('wiz-next')}</button>
       </div>`;
 
   } else if (_wiz.step===3) {
     body += `
-      <div class="wiz-q">What are the key processes or activities?</div>
-      <div class="wiz-hint">List the main steps, workflows, or activities. One per line, or comma-separated. These become <strong>Business Processes</strong>.</div>
-      <textarea id="wizProcesses" class="wiz-textarea" placeholder="e.g.&#10;Order Management&#10;Delivery Tracking&#10;Invoice Query Handling">${esc(_wiz.processes)}</textarea>
+      <div class="wiz-q">${t('wiz-s3-t')}</div>
+      <div class="wiz-hint"></div>
+      <textarea id="wizProcesses" class="wiz-textarea" placeholder="${t('wiz-s3-ph')}">${esc(_wiz.processes)}</textarea>
       <div class="wiz-actions">
-        <button class="wiz-back" onclick="wizBack()">← Back</button>
-        <button class="btn btn-secondary" onclick="wizSkip()">Skip</button>
-        <button class="btn btn-primary" onclick="wizNext()">Next →</button>
+        <button class="wiz-back" onclick="wizBack()">${t('wiz-back')}</button>
+        <button class="btn btn-secondary" onclick="wizSkip()">${t('wiz-skip')}</button>
+        <button class="btn btn-primary" onclick="wizNext()">${t('wiz-next')}</button>
       </div>`;
 
   } else if (_wiz.step===4) {
     body += `
-      <div class="wiz-q">What software or systems are involved?</div>
-      <div class="wiz-hint">List the applications, platforms, or tools that support the work above. One per line, or comma-separated. These become <strong>Application Components</strong>.</div>
-      <textarea id="wizSystems" class="wiz-textarea" placeholder="e.g.&#10;CRM System&#10;Order Management Portal&#10;ERP (SAP)">${esc(_wiz.systems)}</textarea>
+      <div class="wiz-q">${t('wiz-s4-t')}</div>
+      <div class="wiz-hint"></div>
+      <textarea id="wizSystems" class="wiz-textarea" placeholder="${t('wiz-s4-ph')}">${esc(_wiz.systems)}</textarea>
       <div class="wiz-actions">
-        <button class="wiz-back" onclick="wizBack()">← Back</button>
-        <button class="btn btn-secondary" onclick="wizSkip()">Skip</button>
-        <button class="btn btn-primary" onclick="wizNext()">Preview →</button>
+        <button class="wiz-back" onclick="wizBack()">${t('wiz-back')}</button>
+        <button class="btn btn-secondary" onclick="wizSkip()">${t('wiz-skip')}</button>
+        <button class="btn btn-primary" onclick="wizNext()">${t('wiz-next')}</button>
       </div>`;
 
   } else if (_wiz.step===5) {
