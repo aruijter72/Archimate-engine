@@ -965,6 +965,71 @@ const REL_TYPES = [
     desc:'One concept is a type/subtype of another (generalization/specialization).' }
 ];
 
+// ── ArchiMate 3 metamodel aspect classification ─────────────────
+const ASPECT_MAP = {
+  // Business Active Structure
+  BusinessActor:'active', BusinessRole:'active', BusinessCollaboration:'active', BusinessInterface:'active',
+  // Business Behaviour
+  BusinessProcess:'behaviour', BusinessFunction:'behaviour', BusinessInteraction:'behaviour',
+  BusinessEvent:'behaviour', BusinessService:'behaviour',
+  // Business Passive Structure
+  BusinessObject:'passive', Contract:'passive', Representation:'passive', Product:'passive',
+  // Application Active Structure
+  ApplicationComponent:'active', ApplicationCollaboration:'active', ApplicationInterface:'active',
+  // Application Behaviour
+  ApplicationProcess:'behaviour', ApplicationFunction:'behaviour', ApplicationInteraction:'behaviour',
+  ApplicationEvent:'behaviour', ApplicationService:'behaviour',
+  // Application Passive Structure
+  DataObject:'passive',
+  // Technology Active Structure
+  TechnologyNode:'active', SystemSoftware:'active', TechnologyCommunicationNetwork:'active',
+  TechnologyPath:'active', TechnologyCollaboration:'active', TechnologyInterface:'active',
+  // Technology Behaviour
+  TechnologyProcess:'behaviour', TechnologyFunction:'behaviour', TechnologyInteraction:'behaviour',
+  TechnologyEvent:'behaviour', TechnologyService:'behaviour',
+  // Technology Passive Structure
+  Artifact:'passive',
+  // Strategy
+  Resource:'active', Capability:'behaviour', ValueStream:'behaviour', CourseOfAction:'behaviour',
+  // Implementation & Migration
+  WorkPackage:'behaviour', ImplementationEvent:'behaviour', Deliverable:'passive',
+  Gap:'passive', Plateau:'active'
+};
+
+// Returns a warning string if the combination violates ArchiMate 3, or null if valid.
+function validateRelType(srcType, relType, tgtType) {
+  if (!srcType || !tgtType || !relType) return null;
+  const sa = ASPECT_MAP[srcType], ta = ASPECT_MAP[tgtType];
+  if (!sa || !ta) return null;
+  switch (relType) {
+    case 'AccessRelationship':
+      if (sa !== 'behaviour')
+        return 'Access: source must be a Behaviour element (Process, Function, Service…).';
+      if (ta !== 'passive')
+        return 'Access: target must be a Passive Structure element (Data Object, Artifact…).';
+      break;
+    case 'AssignmentRelationship':
+      if (!((sa==='active'&&ta==='behaviour')||(sa==='behaviour'&&ta==='active')||(sa==='active'&&ta==='active')))
+        return 'Assignment: requires Active Structure ↔ Behaviour (or Active ↔ Active for roles).';
+      break;
+    case 'TriggeringRelationship':
+      if (sa!=='behaviour'||ta!=='behaviour')
+        return 'Triggering: both source and target must be Behaviour elements.';
+      break;
+    case 'FlowRelationship':
+      if (sa!=='behaviour'||ta!=='behaviour')
+        return 'Flow: both source and target must be Behaviour elements.';
+      break;
+    case 'ServingRelationship':
+      if (ta==='passive')
+        return 'Serving: cannot target a Passive Structure element — use Association (directed) or Access.';
+      if (sa==='passive')
+        return 'Serving: cannot originate from a Passive Structure element.';
+      break;
+  }
+  return null;
+}
+
 // ══════════════════════════════════════════════════════════════
 // TOOLTIP
 // ══════════════════════════════════════════════════════════════
@@ -1451,6 +1516,9 @@ function renderRelationships() {
 
     for (const rel of model.relationships) {
       const rt = relTypeFor(rel.type);
+      const srcEl = model.elements.find(e => e.id === rel.sourceId);
+      const tgtEl = model.elements.find(e => e.id === rel.targetId);
+      const relWarn = validateRelType(srcEl?.type, rel.type, tgtEl?.type);
 
       // Rebuild dropdowns with correct selection
       let sOpts = `<option value="">— select source —</option>`;
