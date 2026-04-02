@@ -815,19 +815,19 @@
     <button class="lang-btn" data-lang="nl" onclick="setLanguage('nl')">NL</button>
   </div>
   <div class="header-right">
-    <button class="btn btn-secondary" onclick="showWizard()">🪄 Guided Start</button>
-    <button class="btn btn-secondary" onclick="showTemplates()">📋 Templates</button>
-    <button class="btn btn-secondary" onclick="saveModel()">💾 Save JSON</button>
-    <button class="btn btn-secondary" onclick="triggerLoad()">📂 Load JSON</button>
+    <button class="btn btn-secondary" id="btn-wizard-el" onclick="showWizard()">🪄 Guided Start</button>
+    <button class="btn btn-secondary" id="btn-templates-el" onclick="showTemplates()">📋 Templates</button>
+    <button class="btn btn-secondary" id="btn-save-el" onclick="saveModel()">💾 Save JSON</button>
+    <button class="btn btn-secondary" id="btn-load-el" onclick="triggerLoad()">📂 Load JSON</button>
     <input type="file" id="loadFile" accept=".json" style="display:none" onchange="handleLoadFile(event)">
-    <button class="btn btn-primary" onclick="exportArchimate()">⬇ Export .archimate</button>
-    <button class="btn btn-secondary" onclick="exportAMEFF()" title="Export Open Group AMEFF format (archimodel.app compatible)">⬇ Export AMEFF</button>
+    <button class="btn btn-primary" id="btn-export-arc-el" onclick="exportArchimate()">⬇ Export .archimate</button>
+    <button class="btn btn-secondary" id="btn-export-ameff-el" onclick="exportAMEFF()" title="Export Open Group AMEFF format (archimodel.app compatible)">⬇ Export AMEFF</button>
   </div>
 </header>
 
 <!-- ── Model Description ────────────────────────────────────── -->
 <div class="model-doc-bar">
-  <label>Description:</label>
+  <label id="desc-label">Description:</label>
   <input type="text" id="modelDoc" class="model-doc-input"
          placeholder="Describe the purpose and scope of this architecture…"
          oninput="model.documentation = this.value">
