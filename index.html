@@ -84,6 +84,20 @@
     .btn-danger { background: transparent; border-color: rgba(239,68,68,.3); color: #ef4444; }
     .btn-danger:hover { background: rgba(239,68,68,.12); }
 
+    /* ── Language Toggle ────────────────────────────────────────── */
+    .lang-toggle {
+      display: flex; gap: 2px; background: rgba(255,255,255,.06);
+      border: 1px solid var(--border); border-radius: 5px; padding: 2px; flex-shrink: 0;
+    }
+    .lang-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: .72rem; font-weight: 700; padding: .2rem .55rem;
+      border-radius: 4px; cursor: pointer; font-family: inherit; letter-spacing: .04em;
+      transition: all .15s;
+    }
+    .lang-btn.active { background: var(--gold); color: #1a1600; }
+    .lang-btn:not(.active):hover { color: var(--white); background: rgba(255,255,255,.08); }
+
     /* ── Model doc bar ───────────────────────────────────────── */
     .model-doc-bar {
       display: flex; align-items: center; gap: .75rem;
@@ -796,6 +810,10 @@
            value="My Architecture Model" placeholder="Model name…"
            oninput="model.name = this.value">
   </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="nl" onclick="setLanguage('nl')">NL</button>
+  </div>
   <div class="header-right">
     <button class="btn btn-secondary" onclick="showWizard()">🪄 Guided Start</button>
     <button class="btn btn-secondary" onclick="showTemplates()">📋 Templates</button>
@@ -864,6 +882,385 @@ let model = {
   elements:      [],    // { id, layer, type, name, documentation, properties[] }
   relationships: []     // { id, type, sourceId, targetId, name, documentation, directed, accessType, strength }
 };
+
+// ══════════════════════════════════════════════════════════════
+// INTERNATIONALISATION (i18n)
+// ══════════════════════════════════════════════════════════════
+let currentLang = (function(){ try{ return localStorage.getItem('archimate-lang')||'en'; }catch(e){ return 'en'; } })();
+
+const STRINGS = {
+  en: {
+    // Header buttons
+    'btn-wizard':     '🪄 Guided Start',
+    'btn-templates':  '📋 Templates',
+    'btn-save':       '💾 Save JSON',
+    'btn-load':       '📂 Load JSON',
+    'btn-export-arc': '⬇ Export .archimate',
+    'btn-export-ameff':'⬇ Export AMEFF',
+    // Model inputs
+    'model-name-ph':  'Model name…',
+    'model-desc-lbl': 'Description:',
+    'model-desc-ph':  'Describe the purpose and scope of this architecture…',
+    // Stats bar
+    'stat-biz':       'Business',
+    'stat-app':       'Application',
+    'stat-tech':      'Technology',
+    'stat-rel':       'Relationships',
+    'stat-total':     'Total elements',
+    // Tabs
+    'tab-biz':        'Business Layer',
+    'tab-app':        'Application Layer',
+    'tab-tech':       'Technology Layer',
+    'tab-rel':        'Relationships',
+    'tab-help':       'Manual & Legend',
+    // Footer
+    'footer-compat':  'compatible export',
+    // Layer descriptions
+    'ldesc-biz':   'Represents the business environment — actors, roles, processes, services, and objects handled at the organisational level.',
+    'ldesc-app':   'Represents software applications and their components, interfaces, functions, and data objects that support the business.',
+    'ldesc-tech':  'Represents hardware, software infrastructure, networks, and physical assets that support the application and business layers.',
+    // Section headings (kept as display labels; keys in LAYER_CONFIG stay English)
+    'sec-active':  'Active Structure',
+    'sec-behav':   'Behaviour',
+    'sec-passive': 'Passive Structure',
+    // Table columns (renderLayer)
+    'col-type':    'Type',
+    'col-name':    'Name *',
+    'col-doc':     'Documentation',
+    'col-props':   'Custom Properties',
+    // Element row
+    'add-elem':    '+ Add element',
+    'ph-name':     'Element name…',
+    'ph-doc':      'Optional documentation…',
+    'ph-propkey':  'Key',
+    'ph-propval':  'Value',
+    'add-prop':    '+ add property',
+    // Relationships tab
+    'col-src':     'Source Element',
+    'col-rtype':   'Relationship Type',
+    'col-tgt':     'Target Element',
+    'col-lopts':   'Label / Options',
+    'add-rel':     '+ Add Relationship',
+    'no-elems':    'Add elements to the layers above before creating relationships.',
+    'rel-directed':'Directed arrow',
+    'rel-acctype': 'Access type:',
+    'rel-strength':'Strength:',
+    'ph-label':    'Label (optional)',
+    'ph-strength': 'e.g. +, −, 50%',
+    'acc-read':    'Read',
+    'acc-write':   'Write',
+    'acc-rw':      'Read / Write',
+    'acc-unspec':  'Unspecified',
+    // Relationship reference dropdown
+    'rel-ref-hdr': 'ArchiMate Relationship Reference (click to expand)',
+    // Metamodel validation warnings
+    'vw-acc-src':  'Access: source must be a Behaviour element (Process, Function, Service…).',
+    'vw-acc-tgt':  'Access: target must be a Passive Structure element (Data Object, Artifact…).',
+    'vw-assign':   'Assignment: requires Active Structure ↔ Behaviour (or Active ↔ Active for roles).',
+    'vw-trig':     'Triggering: both source and target must be Behaviour elements.',
+    'vw-flow':     'Flow: both source and target must be Behaviour elements.',
+    'vw-srv-tgt':  'Serving: cannot target a Passive Structure element — use Association (directed) or Access.',
+    'vw-srv-src':  'Serving: cannot originate from a Passive Structure element.',
+    // Export
+    'exp-unnamed': (n) => `⚠ ${n} element(s) have no name. Archi will still import them.\n`,
+    'exp-broken':  (n) => `⚠ ${n} relationship(s) have no source/target and will be skipped.\n`,
+    'exp-anyway':  'Export anyway?',
+    // Wizard
+    'wiz-title':   '🪄 Build Step by Step',
+    'wiz-sub':     'Answer four quick questions and the engine will create a working architecture model you can refine.',
+    'wiz-skip':    'Skip',
+    'wiz-back':    '← Back',
+    'wiz-next':    'Next →',
+    'wiz-gen':     '✓ Generate Model',
+    'wiz-s1-t':    'What is the name of your organisation or project?',
+    'wiz-s1-ph':   'e.g. Acme Corp, RetailCo EU, Project Phoenix…',
+    'wiz-s2-t':    'Who are the main actors or roles involved?',
+    'wiz-s2-ph':   'One per line, e.g.\nCustomer\nOrder Manager\nFinance Team',
+    'wiz-s3-t':    'What are the key business processes or services?',
+    'wiz-s3-ph':   'One per line, e.g.\nOrder Processing\nInvoicing\nCustomer Support',
+    'wiz-s4-t':    'Which applications or systems are used?',
+    'wiz-s4-ph':   'One per line, e.g.\nSAP ERP\nCRM System\nCustomer Portal',
+    'wiz-s5-t':    'Any additional notes? (optional)',
+    'wiz-s5-ph':   'Optional context about this architecture…',
+    // Onboarding modal (static HTML — updated by applyTranslations)
+    'ob-title':    '⬡ Welcome to the ArchiMate Engine',
+    'ob-sub':      'This tool helps you create <strong style="color:var(--white)">architecture models</strong> — structured diagrams showing how an organisation works, what software supports it, and what technology runs underneath. You don\'t need to be a technical expert.',
+    'ob-floors':   'Think of it as three floors of a building:',
+    'ob-biz-name': 'Business Layer',
+    'ob-biz-q':    '"Who does what in the organisation?"',
+    'ob-biz-ex':   'People, teams, steps, processes, documents, rules, services',
+    'ob-app-name': 'Application Layer',
+    'ob-app-q':    '"Which software supports the business?"',
+    'ob-app-ex':   'Systems, apps, databases, APIs, data files',
+    'ob-tech-name':'Technology Layer',
+    'ob-tech-q':   '"What infrastructure runs the software?"',
+    'ob-tech-ex':  'Servers, networks, cloud platforms, hardware, storage',
+    'ob-tip':      'Every element type has a <strong style="color:var(--white)">? button</strong> next to it — hover over it for a plain-language explanation and real-world examples. The <strong style="color:var(--white)">Manual &amp; Legend</strong> tab has the full reference.',
+    'ob-noshow':   "Don't show again",
+    'ob-wizard':   '🪄 Build step by step',
+    'ob-tmpl':     '📋 Start from a template',
+    'ob-scratch':  'Start from scratch →',
+    // Template modal
+    'tmpl-title':  '📋 Start from a Template',
+    'tmpl-sub':    'Choose a ready-made model to get started quickly. Loading a template will replace your current model — save your work first if needed.',
+    'tmpl-note':   'Templates are starting points — rename, add, or delete any element after loading.',
+    // Help tab key headings
+    'h-layers':    'The Three Layers',
+    'h-workflow':  'Workflow',
+    'h-rels':      'Relationships',
+    'h-connectors':'Connectors in Archi',
+  },
+  nl: {
+    // Header buttons
+    'btn-wizard':     '🪄 Begeleide Start',
+    'btn-templates':  '📋 Sjablonen',
+    'btn-save':       '💾 Opslaan JSON',
+    'btn-load':       '📂 Laden JSON',
+    'btn-export-arc': '⬇ Exporteer .archimate',
+    'btn-export-ameff':'⬇ Exporteer AMEFF',
+    // Model inputs
+    'model-name-ph':  'Modelnaam…',
+    'model-desc-lbl': 'Beschrijving:',
+    'model-desc-ph':  'Beschrijf het doel en de scope van deze architectuur…',
+    // Stats bar
+    'stat-biz':       'Bedrijf',
+    'stat-app':       'Applicatie',
+    'stat-tech':      'Technologie',
+    'stat-rel':       'Relaties',
+    'stat-total':     'Totaal elementen',
+    // Tabs
+    'tab-biz':        'Bedrijfslaag',
+    'tab-app':        'Applicatielaag',
+    'tab-tech':       'Technologielaag',
+    'tab-rel':        'Relaties',
+    'tab-help':       'Handleiding & Legenda',
+    // Footer
+    'footer-compat':  'compatibele export',
+    // Layer descriptions
+    'ldesc-biz':   'Vertegenwoordigt de bedrijfsomgeving — actoren, rollen, processen, services en objecten op organisatieniveau.',
+    'ldesc-app':   'Vertegenwoordigt softwareapplicaties en hun componenten, interfaces, functies en gegevensobjecten die de bedrijfslaag ondersteunen.',
+    'ldesc-tech':  'Vertegenwoordigt hardware, software-infrastructuur, netwerken en fysieke assets die de applicatie- en bedrijfslagen ondersteunen.',
+    // Section headings
+    'sec-active':  'Actieve Structuur',
+    'sec-behav':   'Gedrag',
+    'sec-passive': 'Passieve Structuur',
+    // Table columns
+    'col-type':    'Type',
+    'col-name':    'Naam *',
+    'col-doc':     'Documentatie',
+    'col-props':   'Aangepaste Eigenschappen',
+    // Element row
+    'add-elem':    '+ Element toevoegen',
+    'ph-name':     'Elementnaam…',
+    'ph-doc':      'Optionele documentatie…',
+    'ph-propkey':  'Sleutel',
+    'ph-propval':  'Waarde',
+    'add-prop':    '+ eigenschap toevoegen',
+    // Relationships tab
+    'col-src':     'Bronelement',
+    'col-rtype':   'Relatietype',
+    'col-tgt':     'Doelelement',
+    'col-lopts':   'Label / Opties',
+    'add-rel':     '+ Relatie toevoegen',
+    'no-elems':    'Voeg eerst elementen toe aan de lagen voordat u relaties aanmaakt.',
+    'rel-directed':'Gerichte pijl',
+    'rel-acctype': 'Toegangstype:',
+    'rel-strength':'Sterkte:',
+    'ph-label':    'Label (optioneel)',
+    'ph-strength': 'bijv. +, −, 50%',
+    'acc-read':    'Lezen',
+    'acc-write':   'Schrijven',
+    'acc-rw':      'Lezen / Schrijven',
+    'acc-unspec':  'Niet gespecificeerd',
+    // Relationship reference dropdown
+    'rel-ref-hdr': 'ArchiMate Relatieverwijzing (klik om uit te klappen)',
+    // Metamodel validation warnings
+    'vw-acc-src':  'Toegang: bron moet een Gedragselement zijn (Proces, Functie, Service…).',
+    'vw-acc-tgt':  'Toegang: doel moet een Passief Structuurelement zijn (Gegevensobject, Artefact…).',
+    'vw-assign':   'Toewijzing: vereist Actieve Structuur ↔ Gedrag (of Actief ↔ Actief voor rollen).',
+    'vw-trig':     'Activering: bron en doel moeten beide Gedragselementen zijn.',
+    'vw-flow':     'Stroom: bron en doel moeten beide Gedragselementen zijn.',
+    'vw-srv-tgt':  'Dienstverlening: kan geen Passief Structuurelement als doel hebben — gebruik Associatie (gericht) of Toegang.',
+    'vw-srv-src':  'Dienstverlening: kan niet vanuit een Passief Structuurelement komen.',
+    // Export
+    'exp-unnamed': (n) => `⚠ ${n} element(en) hebben geen naam. Archi importeert ze toch.\n`,
+    'exp-broken':  (n) => `⚠ ${n} relatie(s) hebben geen bron/doel en worden overgeslagen.\n`,
+    'exp-anyway':  'Toch exporteren?',
+    // Wizard
+    'wiz-title':   '🪄 Stap voor Stap Opbouwen',
+    'wiz-sub':     'Beantwoord vier korte vragen en de engine maakt een werkend architectuurmodel dat u kunt verfijnen.',
+    'wiz-skip':    'Overslaan',
+    'wiz-back':    '← Terug',
+    'wiz-next':    'Volgende →',
+    'wiz-gen':     '✓ Model genereren',
+    'wiz-s1-t':    'Wat is de naam van uw organisatie of project?',
+    'wiz-s1-ph':   'bijv. Acme Corp, RetailCo EU, Project Phoenix…',
+    'wiz-s2-t':    'Wie zijn de belangrijkste actoren of rollen?',
+    'wiz-s2-ph':   'Eén per regel, bijv.\nKlant\nOrdermanager\nFinanciën',
+    'wiz-s3-t':    'Wat zijn de belangrijkste bedrijfsprocessen of -services?',
+    'wiz-s3-ph':   'Eén per regel, bijv.\nOrderverwerking\nFacturering\nKlantenservice',
+    'wiz-s4-t':    'Welke applicaties of systemen worden gebruikt?',
+    'wiz-s4-ph':   'Eén per regel, bijv.\nSAP ERP\nCRM-systeem\nKlantenportaal',
+    'wiz-s5-t':    'Aanvullende opmerkingen? (optioneel)',
+    'wiz-s5-ph':   'Optionele context over deze architectuur…',
+    // Onboarding modal
+    'ob-title':    '⬡ Welkom bij de ArchiMate Engine',
+    'ob-sub':      'Dit hulpmiddel helpt u <strong style="color:var(--white)">architectuurmodellen</strong> te maken — gestructureerde diagrammen die laten zien hoe een organisatie werkt, welke software het ondersteunt en welke technologie eronder draait. U hoeft geen technisch expert te zijn.',
+    'ob-floors':   'Beschouw het als drie verdiepingen van een gebouw:',
+    'ob-biz-name': 'Bedrijfslaag',
+    'ob-biz-q':    '"Wie doet wat in de organisatie?"',
+    'ob-biz-ex':   'Mensen, teams, stappen, processen, documenten, regels, services',
+    'ob-app-name': 'Applicatielaag',
+    'ob-app-q':    '"Welke software ondersteunt het bedrijf?"',
+    'ob-app-ex':   'Systemen, apps, databases, API\'s, databestanden',
+    'ob-tech-name':'Technologielaag',
+    'ob-tech-q':   '"Welke infrastructuur draait de software?"',
+    'ob-tech-ex':  'Servers, netwerken, cloudplatforms, hardware, opslag',
+    'ob-tip':      'Elk elementtype heeft een <strong style="color:var(--white)">? knop</strong> ernaast — beweeg erover voor een uitleg in gewone taal en praktijkvoorbeelden. Het tabblad <strong style="color:var(--white)">Handleiding &amp; Legenda</strong> bevat de volledige referentie.',
+    'ob-noshow':   'Niet meer tonen',
+    'ob-wizard':   '🪄 Stap voor stap opbouwen',
+    'ob-tmpl':     '📋 Starten vanuit sjabloon',
+    'ob-scratch':  'Blanco beginnen →',
+    // Template modal
+    'tmpl-title':  '📋 Starten vanuit Sjabloon',
+    'tmpl-sub':    'Kies een kant-en-klaar model om snel te beginnen. Het laden van een sjabloon vervangt uw huidige model — sla uw werk eerst op indien nodig.',
+    'tmpl-note':   'Sjablonen zijn startpunten — hernoem, voeg toe of verwijder elementen na het laden.',
+    // Help tab key headings
+    'h-layers':    'De Drie Lagen',
+    'h-workflow':  'Werkwijze',
+    'h-rels':      'Relaties',
+    'h-connectors':'Verbindingen in Archi',
+  }
+};
+
+function t(key) {
+  return (STRINGS[currentLang] && STRINGS[currentLang][key] !== undefined)
+    ? STRINGS[currentLang][key]
+    : (STRINGS.en[key] !== undefined ? STRINGS.en[key] : key);
+}
+
+// Section name → STRINGS key
+const SEC_KEY = {
+  'Active Structure': 'sec-active',
+  'Behaviour':        'sec-behav',
+  'Passive Structure':'sec-passive'
+};
+
+// Layer key → description STRINGS key
+const LAYER_DESC_KEY = {
+  business:    'ldesc-biz',
+  application: 'ldesc-app',
+  technology:  'ldesc-tech'
+};
+
+function setLanguage(lang) {
+  currentLang = lang;
+  try { localStorage.setItem('archimate-lang', lang); } catch(e) {}
+  applyTranslations();
+  renderAll();
+  renderHelp();
+}
+
+function applyTranslations() {
+  const L = currentLang;
+  // Language toggle active state
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === L);
+  });
+  // Header buttons
+  const btnMap = {
+    'btn-wizard-el':      'btn-wizard',
+    'btn-templates-el':   'btn-templates',
+    'btn-save-el':        'btn-save',
+    'btn-load-el':        'btn-load',
+    'btn-export-arc-el':  'btn-export-arc',
+    'btn-export-ameff-el':'btn-export-ameff',
+  };
+  for (const [elId, key] of Object.entries(btnMap)) {
+    const el = document.getElementById(elId);
+    if (el) el.textContent = t(key);
+  }
+  // Model input placeholders / labels
+  const mn = document.getElementById('modelName');
+  if (mn) mn.placeholder = t('model-name-ph');
+  const md = document.getElementById('modelDoc');
+  if (md) md.placeholder = t('model-desc-ph');
+  const descLbl = document.getElementById('desc-label');
+  if (descLbl) descLbl.textContent = t('model-desc-lbl');
+  // Stats bar
+  const statIds = {
+    'stat-biz-lbl':'stat-biz','stat-app-lbl':'stat-app',
+    'stat-tech-lbl':'stat-tech','stat-rel-lbl':'stat-rel','stat-total-lbl':'stat-total'
+  };
+  for (const [elId, key] of Object.entries(statIds)) {
+    const el = document.getElementById(elId);
+    if (el) el.textContent = t(key) + ':';
+  }
+  // Tab buttons
+  const tabMap = {
+    'tab-btn-business':'tab-biz','tab-btn-application':'tab-app',
+    'tab-btn-technology':'tab-tech','tab-btn-relationships':'tab-rel','tab-btn-help':'tab-help'
+  };
+  for (const [elId, key] of Object.entries(tabMap)) {
+    const btn = document.getElementById(elId);
+    if (btn) {
+      // preserve the tab-icon span
+      const icon = btn.querySelector('.tab-icon');
+      btn.textContent = ' ' + t(key);
+      if (icon) btn.prepend(icon);
+    }
+  }
+  // Footer
+  const fc = document.getElementById('footer-compat');
+  if (fc) fc.textContent = t('footer-compat');
+  // Onboarding modal
+  const obTitle = document.getElementById('ob-title');
+  if (obTitle) obTitle.textContent = t('ob-title');
+  const obSub = document.getElementById('ob-sub');
+  if (obSub) obSub.innerHTML = t('ob-sub');
+  const obFloors = document.getElementById('ob-floors');
+  if (obFloors) obFloors.textContent = t('ob-floors');
+  const obBizName = document.getElementById('ob-biz-name');
+  if (obBizName) obBizName.textContent = t('ob-biz-name');
+  const obBizQ = document.getElementById('ob-biz-q');
+  if (obBizQ) obBizQ.textContent = t('ob-biz-q');
+  const obBizEx = document.getElementById('ob-biz-ex');
+  if (obBizEx) obBizEx.textContent = t('ob-biz-ex');
+  const obAppName = document.getElementById('ob-app-name');
+  if (obAppName) obAppName.textContent = t('ob-app-name');
+  const obAppQ = document.getElementById('ob-app-q');
+  if (obAppQ) obAppQ.textContent = t('ob-app-q');
+  const obAppEx = document.getElementById('ob-app-ex');
+  if (obAppEx) obAppEx.textContent = t('ob-app-ex');
+  const obTechName = document.getElementById('ob-tech-name');
+  if (obTechName) obTechName.textContent = t('ob-tech-name');
+  const obTechQ = document.getElementById('ob-tech-q');
+  if (obTechQ) obTechQ.textContent = t('ob-tech-q');
+  const obTechEx = document.getElementById('ob-tech-ex');
+  if (obTechEx) obTechEx.textContent = t('ob-tech-ex');
+  const obTip = document.getElementById('ob-tip');
+  if (obTip) obTip.innerHTML = t('ob-tip');
+  const obNoShow = document.getElementById('ob-noshow-lbl');
+  if (obNoShow) obNoShow.textContent = t('ob-noshow');
+  const obWiz = document.getElementById('ob-wizard-btn');
+  if (obWiz) obWiz.textContent = t('ob-wizard');
+  const obTmpl = document.getElementById('ob-tmpl-btn');
+  if (obTmpl) obTmpl.textContent = t('ob-tmpl');
+  const obScratch = document.getElementById('ob-scratch-btn');
+  if (obScratch) obScratch.textContent = t('ob-scratch');
+  // Template modal
+  const tmplTitle = document.getElementById('tmpl-title-el');
+  if (tmplTitle) tmplTitle.textContent = t('tmpl-title');
+  const tmplSub = document.getElementById('tmpl-sub-el');
+  if (tmplSub) tmplSub.textContent = t('tmpl-sub');
+  const tmplNote = document.getElementById('tmpl-note-el');
+  if (tmplNote) tmplNote.textContent = t('tmpl-note');
+  // Wizard modal
+  const wizTitle = document.getElementById('wiz-title-el');
+  if (wizTitle) wizTitle.textContent = t('wiz-title');
+  const wizSub = document.getElementById('wiz-sub-el');
+  if (wizSub) wizSub.textContent = t('wiz-sub');
+}
 
 // ══════════════════════════════════════════════════════════════
 // CONFIGURATION — ArchiMate 3 Core Layers
