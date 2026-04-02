@@ -738,37 +738,37 @@
       <div class="onboard-layer biz">
         <div class="onboard-layer-icon">🏢</div>
         <div>
-          <div class="onboard-layer-name">Business Layer</div>
-          <div class="onboard-layer-q">"Who does what in the organisation?"</div>
-          <div class="onboard-layer-ex">People, teams, steps, processes, documents, rules, services</div>
+          <div class="onboard-layer-name" id="ob-biz-name">Business Layer</div>
+          <div class="onboard-layer-q" id="ob-biz-q">"Who does what in the organisation?"</div>
+          <div class="onboard-layer-ex" id="ob-biz-ex">People, teams, steps, processes, documents, rules, services</div>
         </div>
       </div>
       <div class="onboard-layer app">
         <div class="onboard-layer-icon">💻</div>
         <div>
-          <div class="onboard-layer-name">Application Layer</div>
-          <div class="onboard-layer-q">"Which software supports the business?"</div>
-          <div class="onboard-layer-ex">Systems, apps, databases, APIs, data files</div>
+          <div class="onboard-layer-name" id="ob-app-name">Application Layer</div>
+          <div class="onboard-layer-q" id="ob-app-q">"Which software supports the business?"</div>
+          <div class="onboard-layer-ex" id="ob-app-ex">Systems, apps, databases, APIs, data files</div>
         </div>
       </div>
       <div class="onboard-layer tech">
         <div class="onboard-layer-icon">🔧</div>
         <div>
-          <div class="onboard-layer-name">Technology Layer</div>
-          <div class="onboard-layer-q">"What infrastructure runs the software?"</div>
-          <div class="onboard-layer-ex">Servers, networks, cloud platforms, hardware, storage</div>
+          <div class="onboard-layer-name" id="ob-tech-name">Technology Layer</div>
+          <div class="onboard-layer-q" id="ob-tech-q">"What infrastructure runs the software?"</div>
+          <div class="onboard-layer-ex" id="ob-tech-ex">Servers, networks, cloud platforms, hardware, storage</div>
         </div>
       </div>
     </div>
-    <p style="font-size:.79rem;color:var(--muted);line-height:1.65">Every element type has a <strong style="color:var(--white)">? button</strong> next to it — hover over it for a plain-language explanation and real-world examples. The <strong style="color:var(--white)">Manual &amp; Legend</strong> tab has the full reference.</p>
+    <p style="font-size:.79rem;color:var(--muted);line-height:1.65" id="ob-tip">Every element type has a <strong style="color:var(--white)">? button</strong> next to it — hover over it for a plain-language explanation and real-world examples. The <strong style="color:var(--white)">Manual &amp; Legend</strong> tab has the full reference.</p>
     <div class="onboard-actions">
       <label style="font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;cursor:pointer;margin-right:auto">
         <input type="checkbox" id="onboardNoShow" style="accent-color:var(--gold)" onchange="setOnboardPref(this.checked)">
-        Don't show again
+        <span id="ob-noshow-lbl">Don't show again</span>
       </label>
-      <button class="btn btn-secondary" onclick="closeOnboard(); showWizard()">🪄 Build step by step</button>
-      <button class="btn btn-secondary" onclick="closeOnboard(); showTemplates()">📋 Start from a template</button>
-      <button class="btn btn-primary" onclick="closeOnboard()">Start from scratch →</button>
+      <button class="btn btn-secondary" id="ob-wizard-btn" onclick="closeOnboard(); showWizard()">🪄 Build step by step</button>
+      <button class="btn btn-secondary" id="ob-tmpl-btn" onclick="closeOnboard(); showTemplates()">📋 Start from a template</button>
+      <button class="btn btn-primary" id="ob-scratch-btn" onclick="closeOnboard()">Start from scratch →</button>
     </div>
   </div>
 </div>
