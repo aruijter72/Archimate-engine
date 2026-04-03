@@ -2314,7 +2314,7 @@ function generateArchimateXML(extLayout = null) {
 
 // ── AMEFF Export (Open Group ArchiMate Model Exchange File Format) ──────────
 // Compatible with archimodel.app and any AMEFF-compliant tool.
-function generateAMEFF() {
+function generateAMEFF(extLayout = null) {
   const modelId = genId(), viewId = genId();
   const ameffRel = id => id.replace('Relationship',''); // strip suffix for AMEFF types
 
