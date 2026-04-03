@@ -3746,7 +3746,7 @@ function renderProcTab() {
         <!-- Columns (optional extra dimension) -->
         <div class="proc-section">
           <div class="proc-section-header">
-            <span class="proc-section-title">Columns <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.68rem;color:var(--muted);margin-left:.3rem">optional — phases, locations, partners…</span></span>
+            <span class="proc-section-title">Columns <i class="tip-icon" onmouseenter="showTipById(this,'proc-columns')" onmouseleave="hideTip()">?</i> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.68rem;color:var(--muted);margin-left:.3rem">optional — phases, locations, partners…</span></span>
             <button class="btn-add proc" onclick="addColumn()">+ Add Column</button>
           </div>
           ${!proc.columns.length
@@ -3762,7 +3762,7 @@ function renderProcTab() {
         <!-- Lanes -->
         <div class="proc-section">
           <div class="proc-section-header">
-            <span class="proc-section-title">Lanes</span>
+            <span class="proc-section-title">Lanes <i class="tip-icon" onmouseenter="showTipById(this,'proc-lanes')" onmouseleave="hideTip()">?</i></span>
             <div class="add-buttons">
               ${hasArchiBiz ? `<button class="btn-add proc" onclick="showRolePicker()" title="Import from Business layer">+ From Architecture</button>` : ''}
               <button class="btn-add" onclick="addLane()">+ Add Lane</button>
