@@ -3657,12 +3657,19 @@ function renderProcTab() {
   const proc = getActiveProc();
   const panel = document.getElementById('tab-process');
   if (!panel) return;
-  const hasArchiRoles = (model.elements || []).some(e => e.layer === 'business');
+  const hasArchiBiz = (model.elements || []).some(e => e.layer === 'business');
+  const hasCols = proc && proc.columns && proc.columns.length > 0;
 
   panel.innerHTML = `
-    <div class="layer-intro">
-      <span class="layer-badge proc">PROCESS</span>
-      <span class="layer-desc">Build swimlane diagrams — standalone or linked to your Architecture model. Export to draw.io for editing in Confluence, Visio, Lucidchart, and more.</span>
+    <div class="layer-intro" style="justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <span class="layer-badge proc">PROCESS</span>
+        <span class="layer-desc">Build swimlane diagrams — standalone or linked to your Architecture model. Export to draw.io.</span>
+      </div>
+      <div style="display:flex;gap:.4rem;flex-shrink:0">
+        <button class="btn-add proc" onclick="saveProcJSON()" ${!proc?'disabled':''} title="Save active process as .swimlane.json">💾 Save Swimlane</button>
+        <button class="btn-add" onclick="triggerLoadProc()" title="Load a .swimlane.json file">📂 Load Swimlane</button>
+      </div>
     </div>
     <div class="proc-layout">
 
@@ -3681,24 +3688,40 @@ function renderProcTab() {
               <div class="proc-row ${p.id === _activeProcId ? 'selected' : ''}">
                 <button class="proc-select-btn" onclick="selectProcess('${p.id}')">${esc(p.name) || '(unnamed process)'}</button>
                 ${p.id === _activeProcId
-                  ? `<input class="elem-input" style="max-width:170px;font-size:.82rem" value="${esc(p.name)}" oninput="updateProcName('${p.id}',this.value)" placeholder="Process name…">`
+                  ? `<input class="elem-input" style="max-width:165px;font-size:.82rem" value="${esc(p.name)}" oninput="updateProcName('${p.id}',this.value)" placeholder="Process name…">`
                   : ''}
                 <button class="btn-del-sm" onclick="deleteProcess('${p.id}')" title="Delete process">×</button>
               </div>`).join('')}
         </div>
 
         ${proc ? `
+        <!-- Columns (optional extra dimension) -->
+        <div class="proc-section">
+          <div class="proc-section-header">
+            <span class="proc-section-title">Columns <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.68rem;color:var(--muted);margin-left:.3rem">optional — phases, locations, partners…</span></span>
+            <button class="btn-add proc" onclick="addColumn()">+ Add Column</button>
+          </div>
+          ${!proc.columns.length
+            ? `<div class="proc-empty">No columns — steps flow left-to-right automatically. Add columns to create a phase grid.</div>`
+            : proc.columns.map((c, i) => `
+              <div class="proc-row">
+                <span style="font-size:.68rem;color:var(--muted);width:16px;text-align:right;flex-shrink:0">${i+1}</span>
+                <input class="elem-input" value="${esc(c.name)}" oninput="updateColumnName('${c.id}',this.value)" placeholder="Column name (e.g. Phase 1)…" style="flex:1">
+                <button class="btn-del-sm" onclick="deleteColumn('${c.id}')" title="Remove column">×</button>
+              </div>`).join('')}
+        </div>
+
         <!-- Lanes -->
         <div class="proc-section">
           <div class="proc-section-header">
             <span class="proc-section-title">Lanes</span>
             <div class="add-buttons">
-              ${hasArchiRoles ? `<button class="btn-add proc" onclick="showRolePicker()" title="Pick from Business layer">+ From Architecture</button>` : ''}
+              ${hasArchiBiz ? `<button class="btn-add proc" onclick="showRolePicker()" title="Import from Business layer">+ From Architecture</button>` : ''}
               <button class="btn-add" onclick="addLane()">+ Add Lane</button>
             </div>
           </div>
           ${!proc.lanes.length
-            ? `<div class="proc-empty">No lanes yet — add actors or roles that participate in this process.</div>`
+            ? `<div class="proc-empty">No lanes yet — add the actors or roles that participate in this process.</div>`
             : proc.lanes.map((l, i) => `
               <div class="proc-row">
                 <span style="font-size:.68rem;color:var(--muted);width:16px;text-align:right;flex-shrink:0">${i+1}</span>
@@ -3715,18 +3738,19 @@ function renderProcTab() {
           </div>
           ${!proc.steps.length
             ? `<div class="proc-empty">No steps yet — add tasks, decisions, and start/end events.</div>`
-            : `<table class="elem-table" style="font-size:.8rem">
+            : `<table class="elem-table" style="font-size:.79rem">
                 <thead><tr>
-                  <th style="width:90px">Type</th>
+                  <th style="width:84px">Type</th>
                   <th>Label</th>
-                  <th style="width:110px">Lane</th>
+                  <th style="width:100px">Lane</th>
+                  ${hasCols ? `<th style="width:100px">Column</th>` : ''}
                   <th style="width:28px"></th>
                 </tr></thead>
                 <tbody>
                   ${proc.steps.map(s => `
                     <tr>
                       <td>
-                        <select class="elem-input" style="font-size:.75rem;padding:.17rem .3rem" onchange="updateStepField('${s.id}','type',this.value)">
+                        <select class="elem-input" style="font-size:.73rem;padding:.15rem .25rem" onchange="updateStepField('${s.id}','type',this.value)">
                           <option value="start"    ${s.type==='start'    ?'selected':''}>▶ Start</option>
                           <option value="task"     ${s.type==='task'     ?'selected':''}>□ Task</option>
                           <option value="decision" ${s.type==='decision' ?'selected':''}>◇ Decision</option>
@@ -3735,11 +3759,17 @@ function renderProcTab() {
                       </td>
                       <td><input class="elem-input" value="${esc(s.label)}" oninput="updateStepField('${s.id}','label',this.value)" placeholder="Step label…"></td>
                       <td>
-                        <select class="elem-input" style="font-size:.75rem;padding:.17rem .3rem" onchange="updateStepField('${s.id}','laneId',this.value)">
+                        <select class="elem-input" style="font-size:.73rem;padding:.15rem .25rem" onchange="updateStepField('${s.id}','laneId',this.value)">
                           <option value="">— none —</option>
                           ${proc.lanes.map(l => `<option value="${l.id}" ${s.laneId===l.id?'selected':''}>${esc(l.name)||'(unnamed)'}</option>`).join('')}
                         </select>
                       </td>
+                      ${hasCols ? `<td>
+                        <select class="elem-input" style="font-size:.73rem;padding:.15rem .25rem" onchange="updateStepField('${s.id}','columnId',this.value)">
+                          <option value="">— none —</option>
+                          ${proc.columns.map(c => `<option value="${c.id}" ${s.columnId===c.id?'selected':''}>${esc(c.name)||'(unnamed)'}</option>`).join('')}
+                        </select>
+                      </td>` : ''}
                       <td><button class="btn-del-sm" onclick="deleteStep('${s.id}')">×</button></td>
                     </tr>`).join('')}
                 </tbody>
@@ -3754,27 +3784,27 @@ function renderProcTab() {
           </div>
           ${!proc.flows.length
             ? `<div class="proc-empty">No flows yet — connect steps to define the sequence.</div>`
-            : `<table class="elem-table" style="font-size:.8rem">
+            : `<table class="elem-table" style="font-size:.79rem">
                 <thead><tr>
                   <th>From</th>
                   <th>To</th>
-                  <th style="width:90px">Label</th>
+                  <th style="width:82px">Label</th>
                   <th style="width:28px"></th>
                 </tr></thead>
                 <tbody>
                   ${proc.flows.map(f => `
                     <tr>
                       <td>
-                        <select class="elem-input" style="font-size:.75rem;padding:.17rem .3rem" onchange="updateFlowField('${f.id}','from',this.value)">
-                          ${proc.steps.map(s => `<option value="${s.id}" ${f.from===s.id?'selected':''}>${esc(s.label)||(s.type)}</option>`).join('')}
+                        <select class="elem-input" style="font-size:.73rem;padding:.15rem .25rem" onchange="updateFlowField('${f.id}','from',this.value)">
+                          ${proc.steps.map(s => `<option value="${s.id}" ${f.from===s.id?'selected':''}>${esc(s.label)||s.type}</option>`).join('')}
                         </select>
                       </td>
                       <td>
-                        <select class="elem-input" style="font-size:.75rem;padding:.17rem .3rem" onchange="updateFlowField('${f.id}','to',this.value)">
-                          ${proc.steps.map(s => `<option value="${s.id}" ${f.to===s.id?'selected':''}>${esc(s.label)||(s.type)}</option>`).join('')}
+                        <select class="elem-input" style="font-size:.73rem;padding:.15rem .25rem" onchange="updateFlowField('${f.id}','to',this.value)">
+                          ${proc.steps.map(s => `<option value="${s.id}" ${f.to===s.id?'selected':''}>${esc(s.label)||s.type}</option>`).join('')}
                         </select>
                       </td>
-                      <td><input class="elem-input" value="${esc(f.label)}" oninput="updateFlowField('${f.id}','label',this.value)" placeholder="Yes / No…" style="font-size:.75rem"></td>
+                      <td><input class="elem-input" value="${esc(f.label)}" oninput="updateFlowField('${f.id}','label',this.value)" placeholder="Yes / No…" style="font-size:.73rem"></td>
                       <td><button class="btn-del-sm" onclick="deleteFlow('${f.id}')">×</button></td>
                     </tr>`).join('')}
                 </tbody>
@@ -3786,7 +3816,7 @@ function renderProcTab() {
       <!-- RIGHT: Preview + Export -->
       <div class="proc-preview-pane">
         <div class="proc-preview-header">
-          <span class="proc-preview-label">Preview</span>
+          <span class="proc-preview-label">Preview ${hasCols ? '<span style="font-size:.65rem;color:var(--proc-text);margin-left:.3rem">grid mode</span>' : ''}</span>
           <button class="btn-export-proc" onclick="exportDrawio()" ${!proc?'disabled':''}>⬇ Export draw.io XML</button>
         </div>
         <div class="proc-svg-wrap" id="proc-svg-wrap">
