@@ -904,7 +904,7 @@ let model = {
 // ══════════════════════════════════════════════════════════════
 // INTERNATIONALISATION (i18n)
 // ══════════════════════════════════════════════════════════════
-let currentLang = (function(){ try{ return localStorage.getItem('archimate-lang')||'en'; }catch(e){ return 'en'; } })();
+let currentLang = (function(){ try{ return localStorage.getItem('architise-lang')||'en'; }catch(e){ return 'en'; } })();
 
 const STRINGS = {
   en: {
@@ -1173,7 +1173,7 @@ const LAYER_DESC_KEY = {
 
 function setLanguage(lang) {
   currentLang = lang;
-  try { localStorage.setItem('archimate-lang', lang); } catch(e) {}
+  try { localStorage.setItem('architise-lang', lang); } catch(e) {}
   applyTranslations();
   renderAll();
   renderHelp();
@@ -1511,14 +1511,14 @@ function tipBtn(type) {
 // ONBOARDING
 // ══════════════════════════════════════════════════════════════
 function showOnboard() {
-  try { if (localStorage.getItem('archimate-no-onboard') === '1') return; } catch(e) {}
+  try { if (localStorage.getItem('architise-no-onboard') === '1') return; } catch(e) {}
   document.getElementById('onboardModal').classList.add('open');
 }
 function closeOnboard() {
   document.getElementById('onboardModal').classList.remove('open');
 }
 function setOnboardPref(checked) {
-  try { localStorage.setItem('archimate-no-onboard', checked ? '1' : '0'); } catch(e) {}
+  try { localStorage.setItem('architise-no-onboard', checked ? '1' : '0'); } catch(e) {}
 }
 
 // ══════════════════════════════════════════════════════════════
