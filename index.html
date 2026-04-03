@@ -2205,35 +2205,50 @@ function generateArchimateXML(extLayout = null) {
   const layerExtents = {};
   let layerY = OY;
 
-  for (const {key} of layers) {
-    const elems = model.elements.filter(e => e.layer === key);
-    if (!elems.length) continue;
-
-    const layerStart = layerY;
-
-    // Split into three aspect buckets
-    const groups = [[], [], []];
-    for (const el of elems) groups[TYPE_ASPECT[el.type] ?? 0].push(el);
-
-    // Place each aspect group in its column
-    for (let asp = 0; asp < 3; asp++) {
-      const grp = groups[asp];
-      grp.forEach((el, i) => {
-        const col = i % ASPECT_COLS;
-        const row = Math.floor(i / ASPECT_COLS);
-        diagMap[el.id] = {
-          diagId: genId(),
-          x: OX + asp * (aspectW + ASPECT_GAP) + col * (EW + HG),
-          y: layerY + row * (EH + VG)
-        };
-      });
+  if (extLayout) {
+    // ── Dagre-computed positions ─────────────────────────────────
+    for (const el of model.elements) {
+      const pos = extLayout[el.id];
+      if (pos) diagMap[el.id] = pos;
     }
-
-    // Advance Y by the tallest aspect group in this layer
-    const maxRows = Math.max(1, ...groups.map(g => Math.ceil(g.length / ASPECT_COLS)));
-    const layerH  = maxRows * (EH + VG);
-    layerExtents[key] = { startY: layerStart, height: layerH };
-    layerY += layerH + LG;
+    // Compute per-layer bounding boxes from actual dagre coordinates
+    for (const {key} of layers) {
+      const elems = model.elements.filter(e => e.layer === key && diagMap[e.id]);
+      if (!elems.length) continue;
+      const xs = elems.map(e => diagMap[e.id].x);
+      const ys = elems.map(e => diagMap[e.id].y);
+      layerExtents[key] = {
+        startY: Math.min(...ys),
+        height: Math.max(...ys) + EH - Math.min(...ys),
+        boxX:   Math.min(...xs) - PAD,
+        boxW:   Math.max(...xs) + EW - Math.min(...xs) + PAD * 2
+      };
+    }
+  } else {
+    // ── Default aspect-aware column layout ───────────────────────
+    for (const {key} of layers) {
+      const elems = model.elements.filter(e => e.layer === key);
+      if (!elems.length) continue;
+      const layerStart = layerY;
+      const groups = [[], [], []];
+      for (const el of elems) groups[TYPE_ASPECT[el.type] ?? 0].push(el);
+      for (let asp = 0; asp < 3; asp++) {
+        const grp = groups[asp];
+        grp.forEach((el, i) => {
+          const col = i % ASPECT_COLS;
+          const row = Math.floor(i / ASPECT_COLS);
+          diagMap[el.id] = {
+            diagId: genId(),
+            x: OX + asp * (aspectW + ASPECT_GAP) + col * (EW + HG),
+            y: layerY + row * (EH + VG)
+          };
+        });
+      }
+      const maxRows = Math.max(1, ...groups.map(g => Math.ceil(g.length / ASPECT_COLS)));
+      const layerH  = maxRows * (EH + VG);
+      layerExtents[key] = { startY: layerStart, height: layerH, boxX: OX - PAD, boxW: TOTAL_W + PAD * 2 };
+      layerY += layerH + LG;
+    }
   }
 
   // Build connection maps
@@ -2251,18 +2266,20 @@ function generateArchimateXML(extLayout = null) {
   xml += `  <folder name="Views" id="${vfId}" type="diagrams">\n`;
   xml += `    <element xsi:type="archimate:ArchimateDiagramModel" name="Default View" id="${viewId}">\n`;
 
-  // ── Aspect column header notes (above the first layer group) ──
-  const firstExt = Object.values(layerExtents)[0];
-  if (firstExt) {
-    const noteY = firstExt.startY - PAD - 22;
-    for (let asp = 0; asp < 3; asp++) {
-      const nx = OX + asp * (aspectW + ASPECT_GAP);
-      xml += `      <child xsi:type="archimate:Note" id="${genId()}">\n`;
-      xml += `        <bounds x="${nx}" y="${noteY}" width="${aspectW}" height="18"/>\n`;
-      xml += `        <content>${ASPECT_LABELS[asp]}</content>\n`;
-      xml += `        <fillColor r="0" g="0" b="0" a="0"/>\n`;
-      xml += `        <lineColor r="0" g="0" b="0" a="0"/>\n`;
-      xml += `      </child>\n`;
+  // ── Aspect column header notes (default layout only — not applicable to dagre) ──
+  if (!extLayout) {
+    const firstExt = Object.values(layerExtents)[0];
+    if (firstExt) {
+      const noteY = firstExt.startY - PAD - 22;
+      for (let asp = 0; asp < 3; asp++) {
+        const nx = OX + asp * (aspectW + ASPECT_GAP);
+        xml += `      <child xsi:type="archimate:Note" id="${genId()}">\n`;
+        xml += `        <bounds x="${nx}" y="${noteY}" width="${aspectW}" height="18"/>\n`;
+        xml += `        <content>${ASPECT_LABELS[asp]}</content>\n`;
+        xml += `        <fillColor r="0" g="0" b="0" a="0"/>\n`;
+        xml += `        <lineColor r="0" g="0" b="0" a="0"/>\n`;
+        xml += `      </child>\n`;
+      }
     }
   }
 
