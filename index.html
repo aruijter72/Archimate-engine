@@ -197,6 +197,83 @@
     .layer-badge.biz  { background: var(--biz-bg);  color: var(--biz-text);  border: 1px solid var(--biz-border); }
     .layer-badge.app  { background: var(--app-bg);  color: var(--app-text);  border: 1px solid var(--app-border); }
     .layer-badge.tech { background: var(--tech-bg); color: var(--tech-text); border: 1px solid var(--tech-border); }
+    .layer-badge.proc { background: var(--proc-bg); color: var(--proc-text); border: 1px solid var(--proc-border); }
+
+    /* ── Process / Swimlane Tab ──────────────────────────────── */
+    .proc-layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) minmax(380px, 1.5fr);
+      gap: 1.5rem; align-items: start;
+    }
+    @media (max-width: 860px) { .proc-layout { grid-template-columns: 1fr; } }
+    .proc-section {
+      background: var(--surface2); border-radius: var(--radius);
+      padding: 1rem 1.1rem; border: 1px solid var(--border);
+      margin-bottom: 1.1rem;
+    }
+    .proc-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .7rem; padding-bottom: .5rem;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+    }
+    .proc-section-title {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--proc-text);
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .proc-section-title::before {
+      content: ''; display: block; width: 3px; height: 12px;
+      border-radius: 2px; background: var(--proc);
+    }
+    .proc-row {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .28rem .1rem;
+      border-bottom: 1px solid rgba(255,255,255,.03);
+    }
+    .proc-row:last-child { border-bottom: none; }
+    .proc-row.selected { background: rgba(167,138,245,.07); border-radius: 4px; padding-left: .4rem; }
+    .proc-select-btn {
+      flex: 1; text-align: left; background: transparent; border: none;
+      color: var(--white); cursor: pointer; font-size: .86rem;
+      font-family: 'Catamaran', system-ui, sans-serif;
+      padding: .15rem .2rem; border-radius: 4px; transition: color .15s;
+    }
+    .proc-select-btn:hover { color: var(--proc-text); }
+    .proc-empty {
+      font-size: .8rem; color: var(--muted); font-style: italic;
+      padding: .6rem .2rem; text-align: center;
+    }
+    .btn-add.proc { border-color: var(--proc-border); color: var(--proc-text); }
+    .btn-add.proc:hover { background: var(--proc-bg); border-color: var(--proc); }
+    /* Preview pane */
+    .proc-preview-pane { position: sticky; top: 1.5rem; }
+    .proc-preview-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .65rem;
+    }
+    .proc-preview-label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .proc-svg-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: auto;
+      min-height: 260px; max-height: 72vh;
+    }
+    .proc-svg-empty {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 260px; font-size: .82rem; color: var(--muted);
+      font-style: italic; padding: 1rem;
+    }
+    .btn-export-proc {
+      padding: .3rem .82rem; border-radius: 5px;
+      background: rgba(167,138,245,.12); border: 1px solid var(--proc-border);
+      color: var(--proc-text); cursor: pointer; font-size: .78rem;
+      font-family: 'Catamaran', system-ui, sans-serif;
+      font-weight: 600; transition: all .18s;
+    }
+    .btn-export-proc:hover { background: rgba(167,138,245,.22); border-color: var(--proc); }
+    .btn-export-proc:disabled { opacity: .38; cursor: not-allowed; }
     .layer-desc { font-size: .82rem; color: var(--muted); }
 
     /* ── Section (Active Structure / Behaviour / Passive) ─────── */
