@@ -3781,7 +3781,7 @@ function renderProcTab() {
         <!-- Steps -->
         <div class="proc-section">
           <div class="proc-section-header">
-            <span class="proc-section-title">Steps</span>
+            <span class="proc-section-title">Steps <i class="tip-icon" onmouseenter="showTipById(this,'proc-steps')" onmouseleave="hideTip()">?</i></span>
             <button class="btn-add proc" onclick="addStep()">+ Add Step</button>
           </div>
           ${!proc.steps.length
@@ -3827,7 +3827,7 @@ function renderProcTab() {
         <!-- Flows -->
         <div class="proc-section">
           <div class="proc-section-header">
-            <span class="proc-section-title">Flows</span>
+            <span class="proc-section-title">Flows <i class="tip-icon" onmouseenter="showTipById(this,'proc-flows')" onmouseleave="hideTip()">?</i></span>
             <button class="btn-add proc" onclick="addFlow()">+ Add Flow</button>
           </div>
           ${!proc.flows.length
