@@ -828,6 +828,10 @@
     <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
     <button class="lang-btn" data-lang="nl" onclick="setLanguage('nl')">NL</button>
   </div>
+  <button id="btn-autolayout" class="btn-layout-toggle" onclick="toggleAutoLayout(this)"
+    title="Auto Layout uses the Dagre/Sugiyama algorithm to minimise edge crossings in the Archi export">
+    ⚡ Auto Layout: OFF
+  </button>
   <div class="header-right">
     <button class="btn btn-secondary" id="btn-wizard-el" onclick="showWizard()">🪄 Guided Start</button>
     <button class="btn btn-secondary" id="btn-templates-el" onclick="showTemplates()">📋 Templates</button>
