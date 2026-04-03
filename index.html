@@ -37,6 +37,11 @@
       --rel-bg:     rgba(245,160,122,.12);
       --rel-border: rgba(245,160,122,.4);
       --rel-text:   #d4825a;
+      /* Process / Swimlane */
+      --proc:        #a78af5;
+      --proc-bg:     rgba(167,138,245,.13);
+      --proc-border: rgba(167,138,245,.4);
+      --proc-text:   #b09af5;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -603,6 +608,8 @@
     /* ── Manual & Legend tab ─────────────────────────────────── */
     .tab-icon.help { background: rgba(201,163,85,.12); color: var(--gold); border: 1px solid rgba(201,163,85,.28); }
     .tab-btn.active.help { color: var(--white); border-bottom-color: var(--gold); }
+    .tab-icon.proc { background: var(--proc-bg); color: var(--proc-text); border: 1px solid var(--proc-border); }
+    .tab-btn.active.proc { color: var(--white); border-bottom-color: var(--proc); }
 
     .ml-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
     @media (max-width: 900px) { .ml-grid { grid-template-columns: 1fr; } }
