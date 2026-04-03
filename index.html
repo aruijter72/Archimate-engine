@@ -2391,7 +2391,7 @@ function generateAMEFF(extLayout = null) {
   xml += `        <name xml:lang="en">Default View</name>\n`;
   for (const el of model.elements) {
     const n=nodeMap[el.id]; if (!n) continue;
-    xml += `        <node identifier="${n.nodeId}" elementRef="${el.id}" xsi:type="Element" x="${n.x}" y="${n.y}" w="${EW}" h="${EH}"/>\n`;
+    xml += `        <node identifier="${n.nodeId}" elementRef="${el.id}" xsi:type="Element" x="${n.x}" y="${n.y}" w="${n.w||EW}" h="${n.h||EH}"/>\n`;
   }
   for (const r of model.relationships) {
     if (!r.sourceId||!r.targetId) continue;
