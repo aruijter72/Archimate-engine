@@ -2870,6 +2870,127 @@ const TEMPLATES = [
   }
 ];
 
+// ── Process / Swimlane Templates ─────────────────────────────
+const PROC_TEMPLATES = [
+  {
+    icon: '✨', name: 'Blank Process',
+    desc: 'Start with an empty swimlane and build your process from scratch.',
+    tags: [], isBlank: true,
+    process: {
+      id: 'pt0', name: 'New Process',
+      columns: [], lanes: [], steps: [], flows: []
+    }
+  },
+  {
+    icon: '🛒', name: 'Order to Cash',
+    desc: 'End-to-end flow from customer order through fulfilment, invoicing and payment.',
+    tags: ['Finance', 'Sales', 'Warehouse'],
+    process: {
+      id: 'pt1', name: 'Order to Cash',
+      columns: [], lanes: [
+        { id: 'pt1-l1', name: 'Customer' },
+        { id: 'pt1-l2', name: 'Sales' },
+        { id: 'pt1-l3', name: 'Finance & Billing' },
+        { id: 'pt1-l4', name: 'Warehouse' }
+      ],
+      steps: [
+        { id: 'pt1-s1', laneId: 'pt1-l1', columnId: '', type: 'start',    label: 'Order Placed' },
+        { id: 'pt1-s2', laneId: 'pt1-l2', columnId: '', type: 'task',     label: 'Receive & Log Order' },
+        { id: 'pt1-s3', laneId: 'pt1-l2', columnId: '', type: 'decision', label: 'Credit Check' },
+        { id: 'pt1-s4', laneId: 'pt1-l3', columnId: '', type: 'task',     label: 'Process Order' },
+        { id: 'pt1-s5', laneId: 'pt1-l4', columnId: '', type: 'task',     label: 'Pick & Pack' },
+        { id: 'pt1-s6', laneId: 'pt1-l4', columnId: '', type: 'task',     label: 'Ship Order' },
+        { id: 'pt1-s7', laneId: 'pt1-l3', columnId: '', type: 'task',     label: 'Send Invoice' },
+        { id: 'pt1-s8', laneId: 'pt1-l3', columnId: '', type: 'end',      label: 'Payment Received' },
+        { id: 'pt1-s9', laneId: 'pt1-l2', columnId: '', type: 'end',      label: 'Order Declined' }
+      ],
+      flows: [
+        { id: 'pt1-f1', from: 'pt1-s1', to: 'pt1-s2', label: '' },
+        { id: 'pt1-f2', from: 'pt1-s2', to: 'pt1-s3', label: '' },
+        { id: 'pt1-f3', from: 'pt1-s3', to: 'pt1-s4', label: 'Yes' },
+        { id: 'pt1-f4', from: 'pt1-s3', to: 'pt1-s9', label: 'No' },
+        { id: 'pt1-f5', from: 'pt1-s4', to: 'pt1-s5', label: '' },
+        { id: 'pt1-f6', from: 'pt1-s5', to: 'pt1-s6', label: '' },
+        { id: 'pt1-f7', from: 'pt1-s6', to: 'pt1-s7', label: '' },
+        { id: 'pt1-f8', from: 'pt1-s7', to: 'pt1-s8', label: '' }
+      ]
+    }
+  },
+  {
+    icon: '🖥', name: 'IT Incident Response',
+    desc: 'ITSM-style incident handling from first report through investigation and closure.',
+    tags: ['IT', 'Operations', 'Service Desk'],
+    process: {
+      id: 'pt2', name: 'IT Incident Response',
+      columns: [], lanes: [
+        { id: 'pt2-l1', name: 'User' },
+        { id: 'pt2-l2', name: 'Help Desk' },
+        { id: 'pt2-l3', name: 'IT Engineer' }
+      ],
+      steps: [
+        { id: 'pt2-s1',  laneId: 'pt2-l1', columnId: '', type: 'start',    label: 'Report Issue' },
+        { id: 'pt2-s2',  laneId: 'pt2-l2', columnId: '', type: 'task',     label: 'Log Ticket' },
+        { id: 'pt2-s3',  laneId: 'pt2-l2', columnId: '', type: 'task',     label: 'Categorise & Prioritise' },
+        { id: 'pt2-s4',  laneId: 'pt2-l2', columnId: '', type: 'decision', label: 'Known Issue?' },
+        { id: 'pt2-s5',  laneId: 'pt2-l2', columnId: '', type: 'task',     label: 'Apply Known Fix' },
+        { id: 'pt2-s6',  laneId: 'pt2-l2', columnId: '', type: 'task',     label: 'Assign to Engineer' },
+        { id: 'pt2-s7',  laneId: 'pt2-l3', columnId: '', type: 'task',     label: 'Investigate' },
+        { id: 'pt2-s8',  laneId: 'pt2-l3', columnId: '', type: 'task',     label: 'Resolve Issue' },
+        { id: 'pt2-s9',  laneId: 'pt2-l1', columnId: '', type: 'task',     label: 'Verify Resolution' },
+        { id: 'pt2-s10', laneId: 'pt2-l2', columnId: '', type: 'end',      label: 'Close Ticket' }
+      ],
+      flows: [
+        { id: 'pt2-f1',  from: 'pt2-s1',  to: 'pt2-s2',  label: '' },
+        { id: 'pt2-f2',  from: 'pt2-s2',  to: 'pt2-s3',  label: '' },
+        { id: 'pt2-f3',  from: 'pt2-s3',  to: 'pt2-s4',  label: '' },
+        { id: 'pt2-f4',  from: 'pt2-s4',  to: 'pt2-s5',  label: 'Yes' },
+        { id: 'pt2-f5',  from: 'pt2-s4',  to: 'pt2-s6',  label: 'No' },
+        { id: 'pt2-f6',  from: 'pt2-s5',  to: 'pt2-s9',  label: '' },
+        { id: 'pt2-f7',  from: 'pt2-s6',  to: 'pt2-s7',  label: '' },
+        { id: 'pt2-f8',  from: 'pt2-s7',  to: 'pt2-s8',  label: '' },
+        { id: 'pt2-f9',  from: 'pt2-s8',  to: 'pt2-s9',  label: '' },
+        { id: 'pt2-f10', from: 'pt2-s9',  to: 'pt2-s10', label: '' }
+      ]
+    }
+  },
+  {
+    icon: '🧑‍💼', name: 'Employee Onboarding',
+    desc: 'Phase-based onboarding grid across HR, IT, manager and new employee — four weeks shown as columns.',
+    tags: ['HR', 'Grid mode'],
+    process: {
+      id: 'pt3', name: 'Employee Onboarding',
+      columns: [
+        { id: 'pt3-c1', name: 'Week 1' },
+        { id: 'pt3-c2', name: 'Week 2' },
+        { id: 'pt3-c3', name: 'Week 3' },
+        { id: 'pt3-c4', name: 'Week 4' }
+      ],
+      lanes: [
+        { id: 'pt3-l1', name: 'HR' },
+        { id: 'pt3-l2', name: 'IT' },
+        { id: 'pt3-l3', name: 'Manager' },
+        { id: 'pt3-l4', name: 'New Employee' }
+      ],
+      steps: [
+        { id: 'pt3-s1',  laneId: 'pt3-l1', columnId: 'pt3-c1', type: 'task', label: 'Send Welcome Pack' },
+        { id: 'pt3-s2',  laneId: 'pt3-l2', columnId: 'pt3-c1', type: 'task', label: 'Create Accounts & Access' },
+        { id: 'pt3-s3',  laneId: 'pt3-l3', columnId: 'pt3-c1', type: 'task', label: 'Prepare Workspace' },
+        { id: 'pt3-s4',  laneId: 'pt3-l4', columnId: 'pt3-c1', type: 'start', label: 'Day 1 Orientation' },
+        { id: 'pt3-s5',  laneId: 'pt3-l1', columnId: 'pt3-c2', type: 'task', label: 'Compliance Training' },
+        { id: 'pt3-s6',  laneId: 'pt3-l2', columnId: 'pt3-c2', type: 'task', label: 'Systems Training' },
+        { id: 'pt3-s7',  laneId: 'pt3-l3', columnId: 'pt3-c2', type: 'task', label: 'Team Introduction' },
+        { id: 'pt3-s8',  laneId: 'pt3-l4', columnId: 'pt3-c2', type: 'task', label: 'Complete Onboarding Tasks' },
+        { id: 'pt3-s9',  laneId: 'pt3-l1', columnId: 'pt3-c3', type: 'task', label: 'Check-in Meeting' },
+        { id: 'pt3-s10', laneId: 'pt3-l3', columnId: 'pt3-c3', type: 'task', label: 'First Assignment' },
+        { id: 'pt3-s11', laneId: 'pt3-l4', columnId: 'pt3-c3', type: 'task', label: 'Apply Role Knowledge' },
+        { id: 'pt3-s12', laneId: 'pt3-l3', columnId: 'pt3-c4', type: 'task', label: '30-day Review' },
+        { id: 'pt3-s13', laneId: 'pt3-l1', columnId: 'pt3-c4', type: 'end',  label: 'Confirm Probation Status' }
+      ],
+      flows: []
+    }
+  }
+];
+
 // Allowed relationship rules (summarised)
 const REL_RULES = {
   AssociationRelationship:    'Any concept → any concept',
