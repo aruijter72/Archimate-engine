@@ -3331,15 +3331,15 @@ function renderHelp() {
   html += `<div>`;
 
   // Layer legend
-  const legendLayerTitle  = NL ? 'Laagkleurcodering'       : 'Layer Colour Coding';
-  const legendAspectTitle = NL ? 'Aspectindicatoren (linkerrandkleur op sectiekoppen)' : 'Aspect Indicators (left border colour on section headers)';
-  const legendElemTitle   = NL ? 'Elementtype Referentie'  : 'Element Type Reference';
-  const legendRelTitle    = NL ? 'Relatietype Referentie'  : 'Relationship Type Reference';
-  const relColType        = NL ? 'Type'                    : 'Type';
-  const relColSym         = NL ? 'Symbool'                 : 'Symbol';
-  const relColDesc        = NL ? 'Beschrijving'            : 'Description';
-  const relColUsage       = NL ? 'Typisch gebruik'         : 'Typical usage';
-  const layerLayerSuffix  = NL ? 'Laag'                    : 'Layer';
+  const legendLayerTitle  = 'Layer Colour Coding';
+  const legendAspectTitle = 'Aspect Indicators (left border colour on section headers)';
+  const legendElemTitle   = 'Element Type Reference';
+  const legendRelTitle    = 'Relationship Type Reference';
+  const relColType        = 'Type';
+  const relColSym         = 'Symbol';
+  const relColDesc        = 'Description';
+  const relColUsage       = 'Typical usage';
+  const layerLayerSuffix  = 'Layer';
 
   html += `
     <div class="ml-card" style="margin-bottom:1.25rem">
