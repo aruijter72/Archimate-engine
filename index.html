@@ -3792,30 +3792,37 @@ function renderProcPreview() {
   }
 }
 
-// Shared step shape renderer (returns SVG string)
+// Shared step shape renderer (returns SVG string) — light-bg palette
 function _renderStepsSVG(steps, sPos, STEP_W, STEP_H, STEP_R, STEP_C, ww) {
+  // Light-background fill/stroke/text triples per type
+  const LIGHT = {
+    start:    { fill:'#D4EDDA', stroke:'#28A745', text:'#155724' },
+    end:      { fill:'#F8D7DA', stroke:'#DC3545', text:'#721C24' },
+    decision: { fill:'#FFF3CD', stroke:'#D4A000', text:'#664D03' },
+    task:     { fill:'#D1ECF1', stroke:'#0C7A9D', text:'#0C5460' },
+  };
   let out = '';
   for (const s of steps) {
     const pos = sPos[s.id]; if (!pos) continue;
     const { cx, cy } = pos;
-    const col = STEP_C[s.type] || '#9496b8';
+    const c = LIGHT[s.type] || { fill:'#e8e8f0', stroke:'#888', text:'#333' };
     const lbl = s.label || s.type;
     if (s.type === 'start' || s.type === 'end') {
-      out += `<circle cx="${cx}" cy="${cy}" r="${STEP_R}" fill="${col}" opacity=".85"/>`;
-      if (s.type==='end') out += `<circle cx="${cx}" cy="${cy}" r="${STEP_R-6}" fill="rgba(0,0,0,.3)"/>`;
+      out += `<circle cx="${cx}" cy="${cy}" r="${STEP_R}" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2"/>`;
+      if (s.type==='end') out += `<circle cx="${cx}" cy="${cy}" r="${STEP_R-6}" fill="${c.stroke}" opacity=".25"/>`;
       ww(lbl,10).forEach((ln,li,a) => {
-        out += `<text x="${cx}" y="${cy+(li-(a.length-1)/2)*11+4}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">${esc(ln)}</text>`;
+        out += `<text x="${cx}" y="${cy+(li-(a.length-1)/2)*11+4}" text-anchor="middle" font-size="9" font-weight="700" fill="${c.text}">${esc(ln)}</text>`;
       });
     } else if (s.type==='decision') {
       const hw=STEP_W/2-5, hh=STEP_H/2-2;
-      out += `<polygon points="${cx},${cy-hh} ${cx+hw},${cy} ${cx},${cy+hh} ${cx-hw},${cy}" fill="${col}" opacity=".2" stroke="${col}" stroke-width="1.5"/>`;
+      out += `<polygon points="${cx},${cy-hh} ${cx+hw},${cy} ${cx},${cy+hh} ${cx-hw},${cy}" fill="${c.fill}" stroke="${c.stroke}" stroke-width="1.5"/>`;
       ww(lbl,11).forEach((ln,li,a) => {
-        out += `<text x="${cx}" y="${cy+(li-(a.length-1)/2)*11+4}" text-anchor="middle" font-size="9" font-weight="600" fill="${col}">${esc(ln)}</text>`;
+        out += `<text x="${cx}" y="${cy+(li-(a.length-1)/2)*11+4}" text-anchor="middle" font-size="9" font-weight="600" fill="${c.text}">${esc(ln)}</text>`;
       });
     } else {
-      out += `<rect x="${cx-STEP_W/2}" y="${cy-STEP_H/2}" width="${STEP_W}" height="${STEP_H}" rx="5" fill="${col}" opacity=".18" stroke="${col}" stroke-width="1.5"/>`;
+      out += `<rect x="${cx-STEP_W/2}" y="${cy-STEP_H/2}" width="${STEP_W}" height="${STEP_H}" rx="5" fill="${c.fill}" stroke="${c.stroke}" stroke-width="1.5"/>`;
       ww(lbl,13).forEach((ln,li,a) => {
-        out += `<text x="${cx}" y="${cy+(li-(a.length-1)/2)*12+4}" text-anchor="middle" font-size="10" font-weight="600" fill="${col}">${esc(ln)}</text>`;
+        out += `<text x="${cx}" y="${cy+(li-(a.length-1)/2)*12+4}" text-anchor="middle" font-size="10" font-weight="600" fill="${c.text}">${esc(ln)}</text>`;
       });
     }
   }
