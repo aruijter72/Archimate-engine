@@ -3331,9 +3331,19 @@ function renderHelp() {
   html += `<div>`;
 
   // Layer legend
+  const legendLayerTitle  = NL ? 'Laagkleurcodering'       : 'Layer Colour Coding';
+  const legendAspectTitle = NL ? 'Aspectindicatoren (linkerrandkleur op sectiekoppen)' : 'Aspect Indicators (left border colour on section headers)';
+  const legendElemTitle   = NL ? 'Elementtype Referentie'  : 'Element Type Reference';
+  const legendRelTitle    = NL ? 'Relatietype Referentie'  : 'Relationship Type Reference';
+  const relColType        = NL ? 'Type'                    : 'Type';
+  const relColSym         = NL ? 'Symbool'                 : 'Symbol';
+  const relColDesc        = NL ? 'Beschrijving'            : 'Description';
+  const relColUsage       = NL ? 'Typisch gebruik'         : 'Typical usage';
+  const layerLayerSuffix  = NL ? 'Laag'                    : 'Layer';
+
   html += `
     <div class="ml-card" style="margin-bottom:1.25rem">
-      <div class="ml-card-head"><span class="ml-card-head-icon">🎨</span> Layer Colour Coding</div>
+      <div class="ml-card-head"><span class="ml-card-head-icon">🎨</span> ${legendLayerTitle}</div>
       <div class="ml-card-body">
         <div class="legend-layers">`;
   for (const l of layerRows) {
@@ -3346,7 +3356,7 @@ function renderHelp() {
   html += `</div>
 
         <div class="notation-box">
-          <h4>Aspect Indicators (left border colour on section headers)</h4>
+          <h4>${legendAspectTitle}</h4>
           <div class="notation-rows">`;
   for (const a of aspectRows) {
     html += `
@@ -3361,18 +3371,23 @@ function renderHelp() {
     </div>`;
 
   // Element types by layer
+  const SECTION_LABELS_NL = { 'Active Structure':'Actieve Structuur', 'Behaviour':'Gedrag', 'Passive Structure':'Passieve Structuur' };
   html += `
     <div class="ml-card" style="margin-bottom:1.25rem">
-      <div class="ml-card-head"><span class="ml-card-head-icon">⬡</span> Element Type Reference</div>
+      <div class="ml-card-head"><span class="ml-card-head-icon">⬡</span> ${legendElemTitle}</div>
       <div class="ml-card-body">`;
 
   for (const [layerKey, config] of Object.entries(LAYER_CONFIG)) {
     const cc = config.colorClass;
-    html += `<div style="margin-bottom:1rem"><div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--${cc}-text);margin-bottom:.5rem;padding:.2rem .5rem;background:var(--${cc}-bg);border-radius:4px;display:inline-block">${config.label} Layer</div>`;
+    const layerLabel = NL
+      ? ({'business':'Bedrijfs','application':'Applicatie','technology':'Technologie'}[layerKey]||config.label)
+      : config.label;
+    html += `<div style="margin-bottom:1rem"><div style="font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--${cc}-text);margin-bottom:.5rem;padding:.2rem .5rem;background:var(--${cc}-bg);border-radius:4px;display:inline-block">${layerLabel} ${layerLayerSuffix}</div>`;
     for (const [secName, types] of Object.entries(config.sections)) {
       const scls = SECTION_CLS[secName] || 'active-struct';
       const scls2 = secName === 'Passive Structure' ? 'passive' : scls;
-      html += `<div class="legend-elem-group"><div class="legend-group-title ${scls2}">${secName}</div><div class="legend-elem-list">`;
+      const secLabel = NL ? (SECTION_LABELS_NL[secName]||secName) : secName;
+      html += `<div class="legend-elem-group"><div class="legend-group-title ${scls2}">${secLabel}</div><div class="legend-elem-list">`;
       for (const t of types) {
         html += `
                 <div class="legend-elem-item">
@@ -3391,14 +3406,14 @@ function renderHelp() {
   // Relationship types legend
   html += `
     <div class="ml-card">
-      <div class="ml-card-head"><span class="ml-card-head-icon">↔</span> Relationship Type Reference</div>
+      <div class="ml-card-head"><span class="ml-card-head-icon">↔</span> ${legendRelTitle}</div>
       <div class="ml-card-body">
         <table class="legend-rel-table">
           <thead><tr>
-            <th>Type</th>
-            <th>Symbol</th>
-            <th>Description</th>
-            <th>Typical usage</th>
+            <th>${relColType}</th>
+            <th>${relColSym}</th>
+            <th>${relColDesc}</th>
+            <th>${relColUsage}</th>
           </tr></thead>
           <tbody>`;
   for (const rt of REL_TYPES) {
